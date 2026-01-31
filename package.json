@@ -1,0 +1,23 @@
+{
+  "name": "qronosbook",
+  "version": "1.0.0",
+  "description": "Sistema de Control de Fichajes",
+  "license": "MIT",
+  "author": "JUAN CARLOS ROBLEDO MORENO",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "method-override": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
