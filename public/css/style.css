@@ -1,0 +1,421 @@
+/* Reseteo básico */
+* { 
+	margin: 0; 
+	padding: 0; 
+	box-sizing: border-box; 
+}
+
+body { 
+	font-family: Arial, sans-serif; 			
+  	overflow: hidden;   /* Evita el scroll global */
+  	height: 100vh;
+  	display: flex;
+  	flex-direction: column; /* Header arriba, Main abajo */
+}
+
+.header {
+    background-color: #5E0905;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 5%;
+    position: relative;
+    height: 70px;
+}
+
+#contenedor-homepage {
+  flex-grow: 1;   /* Esto hace que el main ocupe todo el espacio hasta el final */
+  display: flex;  /* Para que las columnas se pongan una al lado de la otra */
+  height: calc(100vh - 70px);
+}
+
+.mi-logo-contenedor {
+    cursor: default;
+}
+
+.logo-menu {
+    max-width: 100%;    /* Evita que la imagen se salga de su contenedor */
+    height: auto;       /* Mantiene la proporción original */
+    width: 100%;       /* Tamaño base para escritorio */
+   	padding-right: 200px;
+}
+
+.logo-movil {
+    display: none;
+}
+
+.menu {
+    list-style: none;
+    display: flex;    
+}
+
+.menu a {
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s;
+}
+
+li:hover .hamburger, 
+li:hover a {
+    color: #f4a261;
+    transition: color 0.3s ease; /* Opcional: para que el cambio sea suave */
+}
+
+.menu li {
+    cursor: pointer;
+}
+
+
+.menu-toggle { 
+	display: none;  /* Ocultar checkbox */
+}
+
+
+.menu-item-has-dropdown {
+    position: relative; /* Necesario para que el dropdown se alinee justo debajo */
+    display: inline-block;  /* Posicionamiento del padre */
+}
+
+.dropdown {
+    display: none; 
+    position: absolute;
+   	padding-top: 10px;    
+    border-top: 10px solid transparent;     
+    right: 0;
+    left: auto;
+    background-color: #5E0905;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 10px 0;
+    min-width: 100%;
+    width: max-content;
+    z-index: 1000;
+}
+
+.dropdown .user-mobile {
+    display: none;
+}
+
+.menu-item-has-dropdown:hover .dropdown {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.menu-item-has-dropdown:hover .hamburger,
+.menu-item-has-dropdown:hover > a {
+    color: #f4a261;
+}
+
+.dropdown li a {
+	white-space: nowrap; 
+    padding: 8px 15px;
+    display: block;    
+    color: white;
+    text-decoration: none;
+}
+
+.dropdown li a:hover {
+    background-color: #5E0905;
+    color: #f4a261;
+}
+
+.contenedor-principal {
+  display: flex;  
+  width: 100%;       /* Activa el modo de columnas */
+  height: 100vh;         /* Hace que el main ocupe toda la altura de la pantalla */
+}
+
+.columna-izquierda, .columna-derecha {
+  width: 50%;            /* Cada columna ocupa la mitad del ancho */
+}
+
+.columna-izquierda {
+  background-image: url('/images/pictureQR01.png'); 
+  height: 100%;
+  background-size: cover;      /* La imagen cubre todo el div sin deformarse */
+  background-position: center; /* Centra la imagen en el espacio disponible */
+  background-repeat: no-repeat;
+}
+
+.columna-derecha {      
+  background-image: 
+  	linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+  	url('/images/logo01.png');  
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 80%; 
+  display: flex;            /* Activa el contenedor flexible */
+  justify-content: center;  /* Centro horizontal */   
+  height: 100%; 
+  align-items: flex-start;  
+  padding-top: 90px;   
+}
+
+.contenedor-formulario {  
+  display: none;
+  flex-direction: column;     
+  width: 400px; 
+  outline: none;	 
+}
+
+.contenedor-formulario.mostrar {
+	width: 400px; 
+	display: flex;
+}
+
+.fila-botones {
+  display: flex;       /* Alinea los hijos en horizontal */
+  gap: 3px;           /* Espacio exacto entre los dos botones */
+  width: 100%;         /* Ocupa todo el ancho del formulario */
+  margin-top: 10px;    /* Separación respecto a los inputs */ 
+  justify-content: flex-end;
+}
+
+.contenedor-formulario h3 {
+  margin-top: 0; 
+  margin-left: 25px;
+  color: #5E0905;  
+}
+
+.formulario {
+	width: 350px;
+	margin: 20px auto;
+	padding: 20px;	
+	border-radius: 10px;
+	background-color: #f9f9f9;
+	box-shadow: 0px 0px 16px 3px rgba(0,0,0,0.1);
+	display: flex;
+    flex-direction: column;
+}
+
+button {
+	background-color: #ff821c;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    box-sizing: border-box; 
+    width: 130px;    
+    height: 35px;
+    padding: 8px, 18px;    
+    border-radius: 5px;    
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+	background-color: #D13815;
+}
+
+.formulario button {
+	background-color: #ff821c;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    box-sizing: border-box; 
+    width: 130px;    
+    height: 35px;
+    padding: 8px, 18px;    
+    border-radius: 5px;    
+    border: none;
+    cursor: pointer;
+}
+
+.formulario button:hover {
+	background-color: #D13815;
+}
+
+.form-group {
+	position: relative; /* Contenedor de referencia para el label */
+	margin-bottom: 20px;
+}
+
+.form-control {
+	width: 100%;
+	height: 60px; /* Input alto */
+	padding: 24px 15px 5px 15px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	box-sizing: border-box;
+	outline: none;	
+}
+
+.control-label {
+	position: absolute;
+	font-size: 18px;
+	color: #8a94ac;
+	left: 15px;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none; /* El clic pasa al input */
+}
+
+.form-control:focus + .control-label,
+.form-control:not(:placeholder-shown) +
+.control-label {
+	top: 8px; /* Sube el label */
+	font-size: 18px; 
+	color: #ff821c; /* Cambia el color */
+	transform: translateY(0); /* Quita el centrado vertical para que flote arriba */
+}
+
+.alert-style {
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 250px;
+  background-color: #f8d7da; 
+  color: #721c24;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+  font-size: 18px;
+  margin: 15px;
+  position: absolute;
+  top: 460px;
+}
+
+.logout-style {
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 250px;
+  background-color: #DCFCE7; 
+  color: darkgreen;
+  border-radius: 5px;
+  border: 1px solid #10B981;
+  font-size: 18px;
+  margin: 15px;
+  position: absolute;
+  top: 100px;
+}
+
+.alert-style p {
+    margin: 0;              /* Quita el margen que desalinea */
+    text-align: center;         
+}
+
+.logout-style p {
+    margin: 0;              /* Quita el margen que desalinea */
+    text-align: center;         
+}
+
+.alert-style span {
+    margin: 0;
+    display: flex;          /* Ayuda a que el emoji se comporte como bloque */
+    align-items: center;
+}
+
+.logout-style span {
+    margin: 0;
+    display: flex;          /* Ayuda a que el emoji se comporte como bloque */
+    align-items: center;
+}
+
+.icono-check {
+    color: darkgreen; /* Verde */
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.toggleEmoji {
+    position: absolute; 
+    right: 10px; 
+    cursor: pointer; 
+    top: 17px;
+    filter: "grayscale(100%)";
+    opacity: "0.3";
+    pointer-events: "none"; 
+}
+
+.contenedor-adminPage {
+    width: 100%;
+    height: 100vh; /* Para que siga llenando la pantalla */
+    background-size: cover; 
+   	background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+   	url('/images/pictureQR01.png'); 
+    align-items: flex-start;
+    padding-top: 50px; 
+  }
+
+  .contenedor-noLogin {
+    display: flex;            /* Activa el modo flexible */
+    flex-direction: column;   /* Apila los elementos en vertical */
+    align-items: center;      /* Centra los elementos horizontalmente */
+    padding-top: 50px;  
+    gap: 10px;                /* Crea espacio uniforme entre los elementos */
+    text-align: center;       /* Asegura que el texto interno también se centre */    
+  }
+
+  .contenedor-noLogin button {
+    margin-top: 30px;
+    width: 180px;  
+
+  }
+
+  /********************************************************************************************/
+
+@media screen and (max-width: 768px) {
+
+    .logo-menu {
+        display: none;
+    }
+
+    .logo-movil {
+        display: block;   
+        max-width: 100%;    /* Evita que la imagen se salga de su contenedor */
+        height: auto;       /* Mantiene la proporción original */
+        width: 100%;       /* Tamaño base para escritorio (ajústalo a tu gusto) */
+   	    padding-right: 50px;     
+    }
+
+    .menu li > a {
+        display: none;
+    } 
+    
+    .menu li .hamburger {
+        display: inline-block;
+        padding: 10px; /* Crea un área de hover más grande */
+        cursor: pointer;
+    }  
+    
+    .menu li:hover .dropdown {
+        display: block;
+    }
+    
+    .dropdown li a {
+        display: block !important;
+    }
+
+    .dropdown .user-mobile {
+        display: block;
+        cursor: default;
+        padding: 8px 15px;
+    }
+    
+    .columna-izquierda {
+    display: none;
+  }
+
+  /* Aseguramos que la columna derecha ocupe todo el ancho disponible */
+  .columna-derecha {
+    width: 100%;
+    height: 100vh; /* Para que siga llenando la pantalla */
+    background-size: cover; 
+   	background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+   	url('/images/pictureQR01.png'); 
+    align-items: flex-start;
+    padding-top: 70px; 
+  }
+  
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+

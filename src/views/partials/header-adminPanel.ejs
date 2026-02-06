@@ -1,0 +1,19 @@
+<header class="header">
+  <div>
+    <a href="javascript:void(0)" id="mi-logo-contenedor" class="mi-logo-contenedor">
+      <img src="images/logo04.png" alt="Logo Escritorio" class="logo-menu">
+      <img src="images/logo03.png" alt="Logo Móvil" class="logo-movil">
+    </a>    
+  </div>
+  <ul class="menu">
+    <li class="menu-item-has-dropdown">
+      <input type="checkbox" id="menu-toggle" class="menu-toggle">
+      <label for="menu-toggle" class="hamburger">&#9776;</label>
+      <a href="javascript:void(0)"><%= userAdmin %></a>
+      <ul class="dropdown">
+        <li class="user-mobile"><%= userAdmin %></li>
+        <li><li><a href="/adminPanel/logout">Cerrar Sesión</a></li>          
+      </ul>
+    </li>
+  </ul>
+</header>

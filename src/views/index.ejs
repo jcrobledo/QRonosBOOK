@@ -1,0 +1,152 @@
+<script src="scripts/validaDatosLogin.js" defer></script>
+
+<input type="hidden" id="status-message" value="<%= locals.message ? 'true' : 'false' %>">
+<input type="hidden" id="status-logout" value="<%= locals.logoutMessage ? 'true' : 'false' %>">
+
+<div id="contenedor-homepage" class="contenedor-principal">
+    <div class="columna-izquierda"></div>
+    <div class="columna-derecha">
+        <div id="bloque-admin" class="contenedor-formulario">
+            <h3 id="tituloFormulario">TituloFormulario</h3>
+            <form id="formulario" class="formulario" method="post">
+                <div class="form-group">
+                    <input class="form-control" type="text" id="dni" name="dni" maxlength="9" minlength="9"
+                        pattern=".{8}[A-Z]" autocomplete="off" placeholder=" " required
+                        title="9 caracteres. 8 números consecutivos y una letra MAYÚSCULA al final">
+                    <label class="control-label" for="dni">Usuario</label>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="password" id="password" name="password" autocomplete="off"
+                        placeholder=" " required>
+                    <label class="control-label" for="password">Contraseña</label>
+                    <span id="toggleEmoji" class="toggleEmoji">
+                        👁️
+                    </span>
+                </div>
+                <div class="fila-botones">
+                    <button type="button" id="btn-cancelar">
+                        Cancelar
+                    </button>
+                    <button type="submit">
+                        Enviar
+                    </button>
+                </div>
+            </form>
+        </div>
+        <% if (locals.message) { %>
+            <div id="flash-alert" class="alert-style">
+                <span>⛔</span>
+                <p>
+                    <%= message %>
+                </p>
+            </div>
+            <% } %>
+        <% if (locals.logoutMessage) { %>
+            <div id="flash-logout" class="logout-style">
+                <span class="icono-check">&#10004;</span>
+                <p>
+                    <%= logoutMessage %>
+                </p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    const enlaceAdmin = document.getElementById('enlaceAdmin');
+    const enlaceTrab = document.getElementById('enlaceTrab');
+    const formularioShow = document.getElementById('bloque-admin');
+    const btnCancelar = document.getElementById('btn-cancelar');
+    const formulario = document.getElementById('formulario');
+    const tituloFormulario = document.getElementById('tituloFormulario');
+    const flashAlert = document.getElementById('flash-alert');
+    const flashLogout = document.getElementById('flash-logout');
+    const statusMessage = document.getElementById('status-message').value;
+    const statusLogout = document.getElementById('status-logout').value;
+    const passInput = document.getElementById('password');
+    const callerForm = '<%= callerForm %>';
+
+    if (statusMessage === 'true') {
+        if (callerForm === 'Fadmin') {
+            tituloFormulario.innerText = "Acceso al Área de Administración";
+            formulario.action = "/adminPanel";
+        } else if (callerForm === 'Ftrab') {
+            tituloFormulario.innerText = "Acceso al Área de Trabajadores";
+            formulario.action = "/TrabPanel";
+        };
+        formularioShow.classList.add('mostrar');
+    } else {
+        if (callerForm === 'Fadmin') {
+            tituloFormulario.innerText = "Acceso al Área de Administración";
+            formulario.action = "/adminPanel";
+            formularioShow.classList.add('mostrar');
+        } else if (callerForm === 'Ftrab') {
+            tituloFormulario.innerText = "Acceso al Área de Trabajadores";
+            formulario.action = "/TrabPanel";
+            formularioShow.classList.add('mostrar');
+        };        
+    };
+    
+
+    enlaceAdmin.addEventListener('click', function (event) {
+        event.preventDefault();
+        tituloFormulario.innerText = "Acceso al Área de Administración";
+        formulario.reset();
+        formularioShow.classList.add('mostrar');
+        formulario.action = "/adminPanel";
+    });
+
+    enlaceTrab.addEventListener('click', function (event) {
+        event.preventDefault();
+        tituloFormulario.innerText = "Acceso al Área de Trabajadores";
+        formulario.reset();
+        formularioShow.classList.add('mostrar');
+        formulario.action = "/TrabPanel";
+    });
+
+    btnCancelar.addEventListener('click', function (event) {
+        formularioShow.classList.remove('mostrar');
+    });
+
+    if (flashAlert) {
+        setTimeout(function () { flashAlert.style.display = 'none' }, 6000);
+    }
+
+    if (flashLogout) {
+        setTimeout(function () { flashLogout.style.display = 'none' }, 5000);
+    }
+
+    function actualizarEstadoOjo() {
+        if (passInput.value.length === 0) {
+            passInput.type = 'password';
+            toggleEmoji.style.filter = "grayscale(100%)";
+            toggleEmoji.style.opacity = "0.3";
+            toggleEmoji.style.pointerEvents = "none";
+        } else {
+            toggleEmoji.style.pointerEvents = "auto";
+            if (passInput.type === 'password') {
+                toggleEmoji.style.filter = "none";
+                toggleEmoji.style.opacity = "1";
+            }
+        };
+    };
+
+    actualizarEstadoOjo();
+
+    passInput.addEventListener('input', actualizarEstadoOjo);
+
+    toggleEmoji.addEventListener('click', function () {
+        var isPassword = passInput.type === 'password';
+
+        if (isPassword) {
+            passInput.type = 'text';
+            toggleEmoji.style.filter = "grayscale(100%)";
+            toggleEmoji.style.opacity = "0.3";
+        } else {
+            passInput.type = 'password';
+            toggleEmoji.style.filter = "none";
+            toggleEmoji.style.opacity = "1";
+        }
+    });
+
+</script>
