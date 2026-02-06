@@ -6,13 +6,6 @@ const fs = require('fs');       // para HTTPS
 
 const app = express();
 
-app.use((req, res, next) => {
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private'); // No almacenar la página en caché ni en el historial
-    res.set('Pragma', 'no-cache');  // Para compatibilidad con HTTP/1.0
-    res.set('Expires', '0'); // Para compatibilidad con navegadores antiguos
-    next();
-});
-
 const baseOptions = {
     key: fs.readFileSync(process.env.SSL_KEY_PATH + '/localhost+1-key.pem'), // para HTTPS
     cert: fs.readFileSync(process.env.SSL_KEY_PATH + '/localhost+1.pem'),     // para HTTPS    

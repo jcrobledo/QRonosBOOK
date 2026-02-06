@@ -149,7 +149,7 @@ li:hover a {
   justify-content: center;  /* Centro horizontal */   
   height: 100%; 
   align-items: flex-start;  
-  padding-top: 90px;   
+  padding-top: 130px;   
 }
 
 .contenedor-formulario {  
@@ -274,7 +274,7 @@ button:hover {
   font-size: 18px;
   margin: 15px;
   position: absolute;
-  top: 460px;
+  top: 100px;
 }
 
 .logout-style {
@@ -409,7 +409,7 @@ button:hover {
    	background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
    	url('/images/pictureQR01.png'); 
     align-items: flex-start;
-    padding-top: 70px; 
+    padding-top: 130px; 
   }
   
 }
