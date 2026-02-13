@@ -24,6 +24,15 @@ body {
     height: 70px;
 }
 
+.header_QR {
+    background-color: #5E0905;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;    
+    height: 300px;
+}
+
 #contenedor-homepage {
   flex-grow: 1;   /* Esto hace que el main ocupe todo el espacio hasta el final */
   display: flex;  /* Para que las columnas se pongan una al lado de la otra */
@@ -41,8 +50,74 @@ body {
    	padding-right: 200px;
 }
 
+.logo-menu_QR {
+    max-width: 100%;    /* Evita que la imagen se salga de su contenedor */
+    height: auto;       /* Mantiene la proporción original */
+    width: 100%;       /* Tamaño base para escritorio */   	
+}
+
 .logo-movil {
     display: none;
+}
+
+.logo-movil_QR {
+    display: none;
+}
+
+.imageQR {
+    display: block;
+    margin: 30px auto;
+ }
+
+ #reloj {
+    margin: auto;
+    text-align: center;
+    color: #D13815;
+    font-weight: bold; 
+    font-size: clamp(20px, 4vw, 30px); /* Tamaño mínimo, ideal y máximo */   
+ }   
+
+ .relojH3 {
+    color: #D13815;
+    text-align: center;
+    font-size: clamp(20px, 4vw, 30px); /* Tamaño mínimo, ideal y máximo */
+    margin-top: 0;
+    margin-bottom: 0;
+ }
+
+ .h1_Reloj {
+    color:#D13815;
+    text-align: center;
+    font-size: clamp(20px, 4vw, 30px); /* Tamaño mínimo, ideal y máximo */
+    margin: 0 20px 25px 20px;
+ }
+
+ .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semitransparente */    
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: wait; /* Cambia el cursor para indicar espera */
+}
+
+.overlay p {
+    color: #D13815;          
+    font-size: clamp(14px, 3,2vw, 24px); /* Tamaño mínimo, ideal y máximo */
+    font-weight: bold;       
+    margin-top: 20px;        
+    text-align: center;    
+    letter-spacing: 1px;     /* Mejora la lectura */
+}
+
+.loader-gif {
+  width: 100px; /* Ajusta el tamaño según tu GIF */
+  height: auto;
 }
 
 .menu {
@@ -365,12 +440,23 @@ button:hover {
         display: none;
     }
 
+    .logo-menu_QR {
+        display: none;
+    }
+
     .logo-movil {
         display: block;   
         max-width: 100%;    /* Evita que la imagen se salga de su contenedor */
         height: auto;       /* Mantiene la proporción original */
         width: 100%;       /* Tamaño base para escritorio (ajústalo a tu gusto) */
    	    padding-right: 50px;     
+    }
+
+    .logo-movil_QR {
+        display: block;   
+        max-width: 100%;    /* Evita que la imagen se salga de su contenedor */
+        height: auto;       /* Mantiene la proporción original */
+        width: 100%;       /* Tamaño base para escritorio (ajústalo a tu gusto) */   	        
     }
 
     .menu li > a {

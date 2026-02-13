@@ -1,3 +1,9 @@
 node_modules
 .env
+.env_PROD
+.env_VPS
 ssl
+index_PROD.js
+index_VPS.js
+package_PROD.json
+package_VPS.json
