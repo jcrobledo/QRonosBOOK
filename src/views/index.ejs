@@ -54,7 +54,8 @@
 
 <script>
     const enlaceAdmin = document.getElementById('enlaceAdmin');
-    const enlaceTrab = document.getElementById('enlaceTrab');    
+    const enlaceTrab = document.getElementById('enlaceTrab');
+    const enlaceQR = document.getElementById('enlaceQR');    
     const formularioShow = document.getElementById('bloque-admin');
     const btnCancelar = document.getElementById('btn-cancelar');
     const formulario = document.getElementById('formulario');
@@ -69,31 +70,37 @@
     if (statusMessage === 'true') {
         if (callerForm === 'Fadmin') {
             tituloFormulario.innerText = "Acceso al Área de Administración";
-            formulario.action = "/adminPanel";
+            formulario.action = "/adminPanel";            
         } else if (callerForm === 'Ftrab') {
             tituloFormulario.innerText = "Acceso al Área de Trabajadores";
-            formulario.action = "/TrabPanel";
+            formulario.action = "/TrabPanel";            
+        } else if (callerForm === 'FQRs') {
+            tituloFormulario.innerText = "Acceso al Generador de QR's";
+            formulario.action = "/codigosQR";            
         };
         formularioShow.classList.add('mostrar');
     } else {
         if (callerForm === 'Fadmin') {
             tituloFormulario.innerText = "Acceso al Área de Administración";
-            formulario.action = "/adminPanel";
+            formulario.action = "/adminPanel";            
             formularioShow.classList.add('mostrar');
         } else if (callerForm === 'Ftrab') {
             tituloFormulario.innerText = "Acceso al Área de Trabajadores";
-            formulario.action = "/TrabPanel";
+            formulario.action = "/TrabPanel";            
             formularioShow.classList.add('mostrar');
-        };        
-    };
-    
+        } else if (callerForm === 'FQRs') {
+            tituloFormulario.innerText = "Acceso al Generador de QR's";
+            formulario.action = "/codigosQR";
+            formularioShow.classList.add('mostrar');            
+        }       
+    };    
 
     enlaceAdmin.addEventListener('click', function (event) {
         event.preventDefault();
         tituloFormulario.innerText = "Acceso al Área de Administración";
         formulario.reset();
         formularioShow.classList.add('mostrar');
-        formulario.action = "/adminPanel";
+        formulario.action = "/adminPanel";        
     });
 
     enlaceTrab.addEventListener('click', function (event) {
@@ -101,8 +108,16 @@
         tituloFormulario.innerText = "Acceso al Área de Trabajadores";
         formulario.reset();
         formularioShow.classList.add('mostrar');
-        formulario.action = "/TrabPanel";
+        formulario.action = "/TrabPanel";        
     });
+
+    enlaceQR.addEventListener('click', function (event) {
+        event.preventDefault();
+        tituloFormulario.innerText = "Acceso al Generador de QR's";
+        formulario.reset();
+        formularioShow.classList.add('mostrar');
+        formulario.action = "/codigosQR";        
+    });    
 
     btnCancelar.addEventListener('click', function (event) {
         formularioShow.classList.remove('mostrar');
