@@ -89,17 +89,19 @@ body {
     color:#D13815;
     text-align: center;
     font-size: clamp(20px, 4vw, 30px); /* Tamaño mínimo, ideal y máximo */
-    margin: 0 20px 25px 20px;
+    margin: 0 20px 0 20px;
  }
 
  .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semitransparente */    
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 1);     
   display: none;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 9999;
@@ -107,6 +109,30 @@ body {
 }
 
 .overlay p {
+    color: #D13815;          
+    font-size: clamp(14px, 3,2vw, 24px); /* Tamaño mínimo, ideal y máximo */
+    font-weight: bold;       
+    margin-top: 20px;        
+    text-align: center;    
+    letter-spacing: 1px;     /* Mejora la lectura */
+}
+
+.overlay_movil {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;  
+  background-color: rgba(255, 255, 255, 0.9);     
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: wait; /* Cambia el cursor para indicar espera */
+}
+
+.overlay_movil p {
     color: #D13815;          
     font-size: clamp(14px, 3,2vw, 24px); /* Tamaño mínimo, ideal y máximo */
     font-weight: bold;       
@@ -243,7 +269,7 @@ li:hover a {
   display: flex;       /* Alinea los hijos en horizontal */
   gap: 3px;           /* Espacio exacto entre los dos botones */
   width: 100%;         /* Ocupa todo el ancho del formulario */
-  margin-top: 10px;    /* Separación respecto a los inputs */ 
+  /* margin-top: 10px;    /* Separación respecto a los inputs */ 
   justify-content: flex-end;
 }
 
@@ -272,7 +298,7 @@ button {
     box-sizing: border-box; 
     width: 130px;    
     height: 35px;
-    padding: 8px, 18px;    
+    padding: 8px 18px;    
     border-radius: 5px;    
     border: none;
     cursor: pointer;
@@ -280,6 +306,23 @@ button {
 
 button:hover {
 	background-color: #D13815;
+}
+
+button.btFichaje {           
+    background-color: #ff821c;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    box-sizing: border-box;
+    width: 150px; 
+    height: auto;   
+    padding: 8px 18px;
+    margin: 7px;
+    border-radius: 5px;
+}
+
+button.btFichaje:hover {
+    background-color: #D13815;
 }
 
 .formulario button {
@@ -297,6 +340,21 @@ button:hover {
 }
 
 .formulario button:hover {
+	background-color: #D13815;
+}
+
+.formulario button.btFichajeK {
+    background-color: #ff821c;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    box-sizing: border-box;
+    width: 200px; 
+    height: auto;   
+    padding: 8px 18px;    
+    border-radius: 5px;}
+
+.formulario button.btFichajeK:hover {
 	background-color: #D13815;
 }
 
@@ -417,6 +475,16 @@ button:hover {
     padding-top: 50px; 
   }
 
+.contenedor-adminPage_movil {
+    width: 100%;
+    height: 100vh; /* Para que siga llenando la pantalla */
+    background-size: cover; 
+   	background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+   	url('/images/pictureQR01.png'); 
+    align-items: flex-start;
+    padding-top: 20px; 
+  }
+
   .contenedor-noLogin {
     display: flex;            /* Activa el modo flexible */
     flex-direction: column;   /* Apila los elementos en vertical */
@@ -429,8 +497,37 @@ button:hover {
   .contenedor-noLogin button {
     margin-top: 30px;
     width: 180px;  
-
   }
+
+.error {
+    color: crimson;
+    font-weight: bold;  
+    text-align: center;      
+}
+
+.error_movil {
+    color: crimson;
+    font-weight: bold;  
+    text-align: center;  
+    margin-top: 25px;    
+}
+
+.correcto {
+    color: darkgreen;
+    font-weight: bold;
+    text-align: center;
+}
+
+.correcto_movil {
+    color: darkgreen;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 25px;
+}
+
+.escondido {
+    display: none;
+}
 
   /********************************************************************************************/
 

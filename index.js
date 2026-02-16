@@ -60,9 +60,9 @@ const io = new Server(server);
 
 io.on('connection', (socket) => {    
     socket.on('SolicitarRecargaQR', () => { // El servidor está "suscrito" a este evento que viene del navegador
-        console.log('Conexión con dispositivo móvil realizada. Renovación QR solicitada.');         
+        // console.log('Conexión con dispositivo móvil realizada. Renovación QR solicitada.');         
         io.emit('EjecutarRecargaQR'); // El servidor reacciona emitiendo el evento al recurso de Códigos QR's
-        console.log('QR renovado.');
+        // console.log('QR renovado.');
     });
 });
 

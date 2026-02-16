@@ -14,7 +14,7 @@ const verifyCert = async (req, res, next) => {
 
         const clientCertReq = req.socket.getPeerCertificate(true).raw;
         const clientCert = new crypto.X509Certificate(clientCertReq);
-        console.log('Certificado del cliente recibido:', clientCert);
+        // console.log('Certificado del cliente recibido:', clientCert);
 
 
         let resultOCSP = {};
@@ -25,7 +25,7 @@ const verifyCert = async (req, res, next) => {
             //  y el certificado del emisor del propio certificado de usuario.        
             const ocspResult = await getCertStatus(clientCertReq);
 
-            console.log('Resultado OCSP:', ocspResult);
+            // console.log('Resultado OCSP:', ocspResult);
 
             if (ocspResult.status === 'good') {
                 resultOCSP = {
@@ -93,7 +93,7 @@ const verifyCert = async (req, res, next) => {
             };
 
             req.user = { userCert, datos };            
-            console.log("Reg.user desde Middleware: ", req.user);
+            // console.log("Reg.user desde Middleware: ", req.user);
 
             next();
 

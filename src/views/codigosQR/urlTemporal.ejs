@@ -1,0 +1,176 @@
+<script src="/scripts/validaDatosLogin.js" defer></script>
+
+<div id="loader-overlay" class="overlay_movil">  
+  <img src="/images/orange_circles.gif" alt="" class="loader-gif">
+  <p id="mensaje-loader"></p>
+</div>
+
+<div id="contenedor-adminPage_movil" class="contenedor-adminPage_movil">
+    <h1 class="h1_Reloj">DATOS DEL FICHAJE</h1>
+    <h3 class="relojH3">
+        <%= fecha %>
+    </h3>
+    <h3 class="relojH3">
+        <%= hora %>
+    </h3>
+    <div align="center" style="margin: 25px;">
+        <button class="btFichaje" id="btCert"
+            onclick="mostrarBloqueo(event); location.href='/codigosQR/urlTemporalCert/<%= sufijoURL %>?sufijoURL=<%= sufijoURL %>&hora=<%= hora %>'">
+            Fichar con Certificado</button>
+        <button class="btFichaje" id="btCred" onclick="mostrarFormulario()">Fichar con credenciales</button>
+    </div>
+
+    <form id="myForm" class="formulario" action="" method="post">
+        <div class="form-group">
+             <input class="form-control" type="text" id="dni" name="dni" maxlength="9" minlength="9"
+                pattern=".{8}[A-Z]" autocomplete="off" placeholder=" " required
+                title="9 caracteres. 8 números consecutivos y una letra MAYÚSCULA al final"
+                onfocus="document.getElementById('ocultar')?.classList.add('escondido');">
+            <label class="control-label" for="dni">Usuario</label>
+        </div>       
+        
+        <input type="hidden" name="dniUser" id="dniUser" value=<%=dni %>> 
+        <input type="hidden" name="fecha" id="fecha" value="<%= fecha %>">
+        <input type="hidden" name="hora" id="hora" value=<%=hora %>>
+        <input type="hidden" name="sufijoURL" id="sufijoURL" value="<%= sufijoURL %>">
+
+        <div class="fila-botones">                    
+            <button id="submitCred" type="submit" onclick="mostrarBloqueo(event)">
+                Enviar
+            </button>
+        </div>        
+
+        <% if (incorrecto=='true' ) { %>
+            <p class="error_movil" id="ocultar">Usuario o contraseña incorrectos</p>
+            <% } else if (error=='true' ) { %>
+                <p class="error_movil" id="ocultar">Error al inciar sesión. Inténtelo de nuevo más tarde</p>
+                <% } else if (noExiste=='true' ) { %>
+                    <p class="error_movil" id="ocultar">El usuario no está dado de alta en el sistema</p>
+                    <% }; %>
+
+    </form>
+
+    <form id="myFormKey" class="formulario" action="/codigosQR/urlTemporalCheckKey/<%= sufijoURL %>" method="post">
+        <div class="form-group">
+             <input class="form-control" type="text" id="nombreKey" name="nombreKey" maxlength="6" minlength="6"
+                pattern="[0-9]{6}" autocomplete="off" placeholder=" " required
+                title="6 números consecutivos sin espacios"
+                onfocus="document.getElementById('ocultar')?.classList.add('escondido');">
+            <label class="control-label" for="nombreKey">Clave de Comprobación</label>
+        </div> 
+
+        <input type="hidden" name="dniUser" id="dniUser" value=<%=dni %>>
+        <input type="hidden" name="nombre" id="nombre" value="<%=nombre %>">
+        <input type="hidden" name="apellidos" id="apellidos" value="<%=apellidos %>">
+        <input type="hidden" name="fecha" id="fecha" value="<%= fecha %>">
+        <input type="hidden" name="hora" id="hora" value=<%=hora %>>
+        <input type="hidden" name="dinamic" id="dinamic" value=<%=dinamic %>>
+        <input type="hidden" name="sufijoURL" id="sufijoURL" value="<%= sufijoURL %>">
+
+        <div class="fila-botones"> 
+            <button id="submitKey" class="btFichajeK" type="submit" onclick="mostrarBloqueo(event)">
+                Guardar fichaje
+            </button>
+        </div>  
+
+        <p class="correcto_movil" id="textClave">Clave enviada por correo electrónico</p>
+
+    </form>
+
+    <h3 class="correcto" id="mgsFichajeOK">Fichaje guardado CORRECTAMENTE</h3>
+    <h3 class="error" id="mgsFichajeKO">Clave INCORRECTA. vuelva a intentarlo</h3>
+
+    <h3 class="correcto" id="mgsFichCertOK">Fichaje guardado CORRECTAMENTE</h3>
+    <h3 class="error" id="mgsFichCertKO">El usuario NO está dado de alta en el sistema</h3>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+    const reloadQR = '<%= reloadQR %>';
+
+    if (reloadQR == 'true') {
+        const socket = io(); // 1. Conectamos al servidor
+
+        socket.on('connect', () => {
+            // console.log("Conectado. Enviando orden de recarga de códigoQR..."); // 2. Esperamos a que la conexión esté lista para emitir      
+            socket.emit('SolicitarRecargaQR'); // 3. Emitimos el evento inmediatamente al entrar
+        });
+    };
+
+    function mostrarFormulario() {
+        document.getElementById('myForm').style.display = 'block';
+    }
+
+    const escondido = '<%= escondido %>';
+
+    if (escondido == 'true') {
+        document.getElementById('myForm').classList.add('escondido');
+    } else {
+        document.getElementById('myForm').classList.remove('escondido');
+    };
+
+    const escondidoBT = '<%= escondidoBT %>';
+
+    if (escondidoBT == 'true') {
+        document.getElementById('btCert').classList.add('escondido');
+        document.getElementById('btCred').classList.add('escondido');
+    } else {
+        document.getElementById('btCert').classList.remove('escondido');
+        document.getElementById('btCred').classList.remove('escondido');
+    };
+
+    const escondidoFkey = '<%= escondidoFkey %>';
+
+    if (escondidoFkey == 'true') {
+        document.getElementById('myFormKey').classList.add('escondido');
+        document.getElementById('textClave').classList.add('escondido');
+    } else {
+        document.getElementById('myFormKey').classList.remove('escondido');
+        document.getElementById('textClave').classList.remove('escondido');
+    };
+
+    const fichajeOK = '<%= fichajeOK %>';
+
+    if (fichajeOK == '') {
+        document.getElementById('mgsFichajeOK').classList.add('escondido');
+        document.getElementById('mgsFichajeKO').classList.add('escondido');
+    } else if (fichajeOK == 'true') {
+        document.getElementById('mgsFichajeOK').classList.remove('escondido');
+        document.getElementById('mgsFichajeKO').classList.add('escondido');
+    } else {
+        document.getElementById('mgsFichajeOK').classList.add('escondido');
+        document.getElementById('mgsFichajeKO').classList.remove('escondido');
+    };
+
+    const noUsuCert = '<%= noUsuCert %>';
+
+    if (noUsuCert == '') {
+        document.getElementById('mgsFichCertOK').classList.add('escondido');
+        document.getElementById('mgsFichCertKO').classList.add('escondido');
+    } else if (noUsuCert == 'true') {
+        document.getElementById('mgsFichCertOK').classList.remove('escondido');
+        document.getElementById('mgsFichCertKO').classList.add('escondido');
+    } else {
+        document.getElementById('mgsFichCertOK').classList.add('escondido');
+        document.getElementById('mgsFichCertKO').classList.remove('escondido');
+    };
+
+    function mostrarBloqueo(event) {
+        const boton = event.currentTarget;
+        const loaderTexto = document.getElementById('mensaje-loader');       
+
+        if (boton.id === 'btCert') {
+            loaderTexto.innerText = "Accediendo a Certificados";
+        } else if (boton.id === 'submitCred') {
+            loaderTexto.innerText = "Enviando Correo";
+        } else if (boton.id === 'submitKey'){
+            loaderTexto.innerText = "Procesando...";
+        };
+
+        document.getElementById('loader-overlay').style.display = 'flex';        
+        
+    };    
+    
+</script>

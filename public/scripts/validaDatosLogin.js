@@ -1,7 +1,10 @@
+const myForm = document.getElementById("myForm"); 
 const dni = document.getElementById("dni");
 const password = document.getElementById("password");
 
 function validar() {
+    if (!dni || !password) return;
+
     if (dni.value !== "" && dni.value === password.value) {
         password.setCustomValidity("Usuario y contraseña no pueden coincidir");        
     } else {
@@ -10,6 +13,8 @@ function validar() {
 };
 
 function validarDNI() {
+    if (!dni) return true; 
+    
     const dniInput = dni.value;    
     const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
 
@@ -19,14 +24,14 @@ function validarDNI() {
 
     if (numero !== "" && Number.isNaN(numero)) {
         dni.setCustomValidity("Los primeros 8 caracteres deben ser números");
-        return;
+        return false;
     };
 
     const esLetraValida = /^[A-Z]$/.test(letraIntroducida);    
 
     if (letraIntroducida !== "" && !esLetraValida) {
         dni.setCustomValidity("El último carácter debe ser una letra en mayúsculas");        
-        return;
+        return false;
     };
 
     // 3. Calcular la letra correcta
@@ -36,20 +41,38 @@ function validarDNI() {
     // 4. Comparar y mostrar resultado
     if (dniInput !== "" && dniInput.length < 9) {
         dni.setCustomValidity("DNI incompleto. 8 números y una letra mayúscula");        
-        return;
+        return false;
     }
     if ((letraIntroducida == letraCorrecta) || (letraIntroducida == "undefined")) {
         dni.setCustomValidity("");
-        return;
+        return true;
     } else {
         dni.setCustomValidity("DNI inválido. La letra correcta sería " + letraCorrecta + " mayúscula");        
-        return;
-    }
+        return false;
+    }    
 }
 
-dni.addEventListener("blur", validarDNI);
-password.addEventListener("blur", validar);
+if (dni) {
+    dni.addEventListener("blur", validarDNI);
+    dni.addEventListener("input", function() { dni.setCustomValidity(""); });
+}
 
-dni.addEventListener("input", () => dni.setCustomValidity(""));
-password.addEventListener("input", () => password.setCustomValidity(""));
+if (password) {
+    password.addEventListener("blur", validar);
+    password.addEventListener("input", function() { password.setCustomValidity(""); });
+}
 
+if (myForm) {
+    myForm.addEventListener('submit', function(e) {        
+        var esDniValido = validarDNI(); 
+        if (esDniValido === false) {
+            e.preventDefault(); 
+            dni.reportValidity(); 
+        } else {            
+            var loader = document.getElementById('loader-overlay');
+            if (loader) {
+                loader.style.display = 'flex';
+            }            
+        }
+    });
+}

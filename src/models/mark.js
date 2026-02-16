@@ -3,9 +3,9 @@ const pool = require('./mysql');
 /********************************************************************************************/
 
 const store = async (marcaje) => {    
-    const sql = 'INSERT INTO marks (id, dni, user, date, time) VALUES (?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO marcajes (id, dni, date, time) VALUES (?, ?, ?, ?)';
     try {
-        const [result] = await pool.execute(sql, [marcaje.id, marcaje.dni, marcaje.user, marcaje.date, marcaje.time]);
+        const [result] = await pool.execute(sql, [marcaje.id, marcaje.dni, marcaje.date, marcaje.time]);
         return result.insertId;        
     } catch (error) {
         throw error;
@@ -15,7 +15,7 @@ const store = async (marcaje) => {
 /********************************************************************************************/
 
 const lastMark = async () => {
-    const sql = 'SELECT * FROM marks ORDER BY id DESC LIMIT 1';
+    const sql = 'SELECT * FROM marcajes ORDER BY id DESC LIMIT 1';
     try {
         const [result] = await pool.execute(sql);        
         return result;        

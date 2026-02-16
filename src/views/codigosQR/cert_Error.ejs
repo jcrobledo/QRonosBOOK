@@ -1,0 +1,9 @@
+        <div id="contenedor-adminPage_movil" class="contenedor-adminPage_movil">
+            <h3 class="error">Error al VALIDAR o PROCESAR el certificado</h3>            
+        </div>           
+
+         <% if (typeof mensajeOCSP != 'undefined') {  %>
+            <h3 class="error"><%= mensajeOCSP %></h3>
+        <% }; %>
+
+         

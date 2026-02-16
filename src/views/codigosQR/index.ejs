@@ -1,10 +1,11 @@
 <script src="/scripts/actualizaReloj.js" defer></script>
+
 <div id="loader-overlay" class="overlay">  
   <img src="/images/orange_circles.gif" alt="" class="loader-gif">
   <p>Proceda con el fichaje</p>
 </div>
 <div id="contenedor-adminPage" class="contenedor-adminPage">
-    <h1 class="h1_Reloj">No abandonar pantalla hasta entrar en FICHAJES</h1>    
+    <h1 class="h1_Reloj" style="margin-bottom: 25px;">No abandonar pantalla hasta entrar en FICHAJES</h1>    
     <h3 class="relojH3"><%= fecha %></h3>
     <div class="reloj" id="reloj"><%= hora %></div>
     <img class="imageQR" src="<%= qrImageSrc %>" alt="Código QR generado">
@@ -17,7 +18,7 @@
 const socket = io();
     
 socket.on('EjecutarRecargaQR', () => {
-    console.log('Código QR Renovado.'); // El navegador reacciona al evento del servidor
+    // console.log('Código QR Renovado.'); // El navegador reacciona al evento del servidor
 
     const loader = document.getElementById('loader-overlay');
     if (loader) {
@@ -26,7 +27,7 @@ socket.on('EjecutarRecargaQR', () => {
 
     setTimeout(() => {
         window.location.reload();
-    }, 2000);
+    }, 3000);
 
 });
 
