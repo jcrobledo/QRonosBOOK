@@ -35,7 +35,7 @@
         <input type="hidden" name="sufijoURL" id="sufijoURL" value="<%= sufijoURL %>">
 
         <div class="fila-botones">                    
-            <button id="submitCred" type="submit" onclick="mostrarBloqueo(event)">
+            <button id="submitCred" type="submit">
                 Enviar
             </button>
         </div>        
@@ -53,7 +53,7 @@
     <form id="myFormKey" class="formulario" action="/codigosQR/urlTemporalCheckKey/<%= sufijoURL %>" method="post">
         <div class="form-group">
              <input class="form-control" type="text" id="nombreKey" name="nombreKey" maxlength="6" minlength="6"
-                pattern="[0-9]{6}" autocomplete="off" placeholder=" " required
+                pattern="[0-9]{6}" autocomplete="off" placeholder=" " inputmode="numeric" required
                 title="6 números consecutivos sin espacios"
                 onfocus="document.getElementById('ocultar')?.classList.add('escondido');">
             <label class="control-label" for="nombreKey">Clave de Comprobación</label>
@@ -68,7 +68,7 @@
         <input type="hidden" name="sufijoURL" id="sufijoURL" value="<%= sufijoURL %>">
 
         <div class="fila-botones"> 
-            <button id="submitKey" class="btFichajeK" type="submit" onclick="mostrarBloqueo(event)">
+            <button id="submitKey" class="btFichajeK" type="submit">
                 Guardar fichaje
             </button>
         </div>  
@@ -158,19 +158,14 @@
     };
 
     function mostrarBloqueo(event) {
-        const boton = event.currentTarget;
-        const loaderTexto = document.getElementById('mensaje-loader');       
-
-        if (boton.id === 'btCert') {
-            loaderTexto.innerText = "Accediendo a Certificados";
-        } else if (boton.id === 'submitCred') {
-            loaderTexto.innerText = "Enviando Correo";
-        } else if (boton.id === 'submitKey'){
-            loaderTexto.innerText = "Procesando...";
+        const mensajes = {
+            'btCert': "Accediendo a Certificados",             
         };
 
-        document.getElementById('loader-overlay').style.display = 'flex';        
-        
-    };    
+        const loaderTexto = document.getElementById('mensaje-loader');    
+        loaderTexto.innerText = mensajes[event.currentTarget.id];
+
+        document.getElementById('loader-overlay').style.display = 'flex';
+    };   
     
 </script>

@@ -52,9 +52,28 @@ function validarDNI() {
     }    
 }
 
+function validarKEY() {
+    if (!nombreKey) return true;       
+    
+    const patron = /^\d{6}$/;
+
+    if (!patron.test(nombreKey.value)) {
+        nombreKey.setCustomValidity("6 números consecutivos y sin espacios");
+        return false;
+    } else {
+        nombreKey.setCustomValidity("");
+        return true;
+    };      
+};
+
 if (dni) {
     dni.addEventListener("blur", validarDNI);
     dni.addEventListener("input", function() { dni.setCustomValidity(""); });
+}
+
+if (nombreKey) {
+    nombreKey.addEventListener("blur", validarKEY);
+    nombreKey.addEventListener("input", function() { validarKEY.setCustomValidity(""); });
 }
 
 if (password) {
@@ -71,6 +90,25 @@ if (myForm) {
         } else {            
             var loader = document.getElementById('loader-overlay');
             if (loader) {
+                const loaderTexto = document.getElementById('mensaje-loader');    
+                loaderTexto.innerText = "Enviando correo";
+                loader.style.display = 'flex';
+            }            
+        }
+    });
+}
+
+if (myFormKey) {
+    myFormKey.addEventListener('submit', function(e) {        
+        var esKeyValido = validarKEY(); 
+        if (esKeyValido === false) {
+            e.preventDefault(); 
+            nombreKey.reportValidity(); 
+        } else {            
+            var loader = document.getElementById('loader-overlay');
+            if (loader) {
+                const loaderTexto = document.getElementById('mensaje-loader');    
+                loaderTexto.innerText = "Guardando Fichaje...";
                 loader.style.display = 'flex';
             }            
         }
