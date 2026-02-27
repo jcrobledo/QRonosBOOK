@@ -1,6 +1,8 @@
-const myForm = document.getElementById("myForm"); 
+const myForm = document.getElementById("myForm");
+const myFormKey = document.getElementById("myFormKey"); 
 const dni = document.getElementById("dni");
 const password = document.getElementById("password");
+const nombreKey = document.getElementById("nombreKey");
 
 function validar() {
     if (!dni || !password) return;

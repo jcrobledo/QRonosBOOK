@@ -27,7 +27,83 @@ const findByDniTrab = async (dni) => {
 
 /********************************************************************************************/
 
+const findAllTrab = async ({ filtros = {}, sort, dir, limit, offset}) => {
+    let query = `
+        SELECT t.* FROM trabajadores t
+        LEFT JOIN departamentos d ON t.departamento = d.id`;
+
+    let countQuery = `
+        SELECT COUNT(*) as total FROM trabajadores t
+        LEFT JOIN departamentos d ON t.departamento = d.id`;
+
+    let queryParams = [];
+    let whereClauses = [];
+
+    if (filtros.dni) {
+        whereClauses.push("t.dni LIKE ?");
+        queryParams.push(`%${filtros.dni}%`);
+    };
+
+    if (filtros.nombre) {
+        whereClauses.push("t.nombre LIKE ?");
+        queryParams.push(`%${filtros.nombre}%`);
+    };
+
+    if (filtros.apellidos) {
+        whereClauses.push("t.apellidos LIKE ?");
+        queryParams.push(`%${filtros.apellidos}%`);
+    };
+
+    if (filtros.departamento) {
+        whereClauses.push("d.nombre LIKE ?");
+        queryParams.push(`%${filtros.departamento}%`);
+    };
+
+    if (whereClauses.length > 0) {
+        const whereString = " WHERE " + whereClauses.join(" AND ");
+        query += whereString;
+        countQuery += whereString;
+    };
+
+    const validColumns = ['dni', 'nombre', 'apellidos', 'email', 'departamento'];
+    let orderBy = validColumns.includes(sort) ? `t.${sort}` : 't.dni';
+    if (sort === 'departamento') orderBy = 'd.nombre';
+
+    const orderDir = (dir.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
+
+    query += ` ORDER BY ${orderBy} ${orderDir} LIMIT ? OFFSET ?`;
+
+    try {
+        const [rows] = await pool.execute(query, [...queryParams, String(limit), String(offset)]);
+        const [[{ total }]] = await pool.execute(countQuery, queryParams);
+
+        return { 
+            trabajadores: rows, 
+            totalCount: total 
+        };
+
+    } catch (error) {
+        throw error;
+    };      
+};
+
+/********************************************************************************************/
+
+const findAllDep = async () => {
+    const sql = 'SELECT * FROM departamentos';
+    try {
+        const [rows] = await pool.execute(sql);
+        return rows;      
+    } catch (error) {
+        throw error;
+    };      
+};
+
+/********************************************************************************************/
+
 module.exports = {      
     findByDniAdmin,
     findByDniTrab,
+    findAllTrab,
+    findAllDep
 };

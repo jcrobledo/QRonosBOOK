@@ -7,7 +7,7 @@ const { validationResult } = require('express-validator');
 
 const auth = async (req, res) => {
 
-  const result = validationResult(req);  
+  const result = validationResult(req);
 
   if (result.isEmpty()) {
 
@@ -26,7 +26,7 @@ const auth = async (req, res) => {
 
         const loginCorrecto = await bcrypt.compare(usuarioAuth.password, queryTrab.password);
 
-        if (loginCorrecto) {          
+        if (loginCorrecto) {
 
           const token = jwt.sign(
             { dni: queryTrab.dni, nombre: queryTrab.nombre, apellidos: queryTrab.apellidos, admin: true },
@@ -49,7 +49,7 @@ const auth = async (req, res) => {
             signed: true,
             httpOnly: true,
             maxAge: 5000
-          });          
+          });
           return res.redirect('/?callerForm=Fadmin');
         };
       } else {
@@ -57,7 +57,7 @@ const auth = async (req, res) => {
           signed: true,
           httpOnly: true,
           maxAge: 5000
-        });        
+        });
         return res.redirect('/?callerForm=Fadmin');
       };
 
@@ -67,7 +67,7 @@ const auth = async (req, res) => {
         signed: true,
         httpOnly: true,
         maxAge: 5000
-      });      
+      });
       return res.redirect('/?callerForm=Fadmin');
     }
   } else {
@@ -76,7 +76,7 @@ const auth = async (req, res) => {
       signed: true,
       httpOnly: true,
       maxAge: 5000
-    });    
+    });
     return res.redirect('/?callerForm=Fadmin');
   };
 
@@ -87,15 +87,115 @@ const auth = async (req, res) => {
 const adminPage = (req, res) => {
 
   const userAdmin = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
 
-  return res.render("adminPanel/adminPanel", { title: "Panel de Administración", 
-    layout: "./layouts/layout-adminPanel", userAdmin  });
+  if (isHTMX) {
+    return res.render("partials/adminPanel/menu_inicio", {
+      layout: false,
+      userAdmin
+    });
+  }
+
+  return res.render("partials/adminPanel/menu_inicio", {
+    title: "Panel de Administración",
+    layout: "./layouts/layout-adminPanel",
+    userAdmin
+  });
 
 };
 
 /********************************************************************************************/
 
-const logout = (req, res) => {  
+const listTrabajadores = async (req, res) => {
+
+  const userAdmin = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+
+  const { dni, nombre, apellidos, departamento, sort, dir, page } = req.query;
+  const filtros = {
+    dni: dni || '',
+    nombre: nombre || '',
+    apellidos: apellidos || '',
+    departamento: departamento || ''
+  };
+  const currentSort = sort || 'dni';
+  const currentDir = dir || 'ASC';
+  const currentPage = parseInt(page) || 1;
+  const limit = 8;
+
+  try {
+    const { trabajadores, totalCount } = await model.findAllTrab({
+      filtros,
+      sort: currentSort,
+      dir: currentDir,
+      limit: limit,
+      offset: (currentPage - 1) * limit
+    });
+    const departamentos = await model.findAllDep();
+
+    const departamentoMap = {};
+    departamentos.forEach((departamento) => {
+      departamentoMap[departamento.id] = departamento.nombre;
+    });
+
+    const desde = totalCount === 0 ? 0 : (currentPage - 1) * limit + 1;
+    const hasta = Math.min(currentPage * limit, totalCount);
+
+    if (isHTMX) {
+      return res.render("partials/adminPanel/listaTrabajadores", {
+        layout: false,
+        userAdmin,
+        trabajadores,
+        departamentoMap,
+        filtros,
+        currentSort,
+        currentDir,
+        currentPage,
+        desde, 
+        hasta,
+        totalPages: Math.ceil(totalCount / limit),
+        totalCount
+      });
+    }
+
+    return res.render("partials/adminPanel/listaTrabajadores", {
+      title: "Gestión de Trabajadores",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin,
+      trabajadores,
+      departamentoMap,
+      filtros,
+      currentSort,
+      currentDir,
+      currentPage,
+      desde, 
+      hasta,
+      totalPages: Math.ceil(totalCount / limit),
+      totalCount
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userAdmin
+      });
+    }
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin
+    });
+  };
+
+};
+
+/********************************************************************************************/
+
+const logout = (req, res) => {
 
   const token = req.cookies.authTokenAdmin;
 
@@ -111,10 +211,10 @@ const logout = (req, res) => {
     delete req.session; // Destruye la sesión
 
     res.cookie('flash_logout', 'Sesión cerrada CORRECTAMENTE', {
-        signed: true,
-        httpOnly: true,
-        maxAge: 5000
-    }); 
+      signed: true,
+      httpOnly: true,
+      maxAge: 5000
+    });
 
     return res.redirect('/');
 
@@ -130,5 +230,6 @@ const logout = (req, res) => {
 module.exports = {
   auth,
   adminPage,
+  listTrabajadores,
   logout
 };

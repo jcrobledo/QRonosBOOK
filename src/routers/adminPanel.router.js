@@ -21,6 +21,7 @@ const vToken = require("../middlewares/verify-token");
 
 router.post("/", rules, controller.auth);
 router.get("/", vToken.verifyTokenAdmin, controller.adminPage);
+router.get("/trabajadores", vToken.verifyTokenAdmin, controller.listTrabajadores);
 router.get("/logout", controller.logout);
 
 module.exports = router;  //para poder exportar la ruta a otros códigos

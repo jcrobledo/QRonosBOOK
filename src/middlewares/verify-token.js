@@ -4,15 +4,24 @@ const jwt = require('jsonwebtoken');
 
 const verifyTokenAdmin = (req, res, next) => {
     
-    const token = req.cookies.authTokenAdmin;        
+    const token = req.cookies.authTokenAdmin; 
+    const isHTMX = req.headers['hx-request'];       
 
     if (!token) {
+        if (isHTMX) {            
+            res.setHeader('HX-Retarget', 'body'); 
+            return res.render('adminPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
+        }
         return res.render('adminPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
     }
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
         if (!verified.admin) {
+            if (isHTMX) {            
+                res.setHeader('HX-Retarget', 'body'); 
+                return res.render('adminPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
+            }
             return res.render('adminPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
         }
 
@@ -52,15 +61,24 @@ const verifyTokenQR = (req, res, next) => {
 
 const verifyTokenTrab = (req, res, next) => {
     
-    const token = req.cookies.authTokenTrab;        
+    const token = req.cookies.authTokenTrab;  
+    const isHTMX = req.headers['hx-request'];      
 
     if (!token) {
+        if (isHTMX) {            
+            res.setHeader('HX-Retarget', 'body'); 
+            return res.render('trabPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
+        }
         return res.render('trabPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
     }
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
 
         if (!verified.trab) {
+            if (isHTMX) {            
+                res.setHeader('HX-Retarget', 'body'); 
+                return res.render('trabPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
+            }
             return res.render('trabPanel/login_No_JWT', { title: "Acceso Denegado", layout: "./layouts/layout-public" });
         }
 
