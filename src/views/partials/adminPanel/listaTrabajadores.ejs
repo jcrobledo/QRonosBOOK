@@ -32,13 +32,13 @@
         <div class="form-group-filtro">
             <input class="form-control input-dni" type="text" id="dniFiltro" name="dni" maxlength="9" pattern="([0-9]{1,8}[a-zA-Z]?)|([a-zA-Z]{1})"
                 autocomplete="off" placeholder=" "
-                title="De 1 a 8 números o una letra y debe ir al final"
+                title="De 1 a 8 números o una letra y debe ir al final (sin ñ/Ñ)"
                 value="<%= filtros.dni %>">
             <label class="control-label" for="dniFiltro">DNI</label>
         </div>
 
         <div class="form-group-filtro">
-            <input class="form-control input-nombre" type="text" id="nombre" name="nombre" maxlength="25" pattern="[a-zA-Z]{1,25}"
+            <input class="form-control input-nombre" type="text" id="nombre" name="nombre" maxlength="25" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ \-]{1,25}"
                 autocomplete="off" placeholder=" " title="Solo letras, máximo 25 caracteres"
                 value="<%= filtros.nombre %>">
             <label class="control-label" for="nombre">Nombre</label>
@@ -46,14 +46,14 @@
 
         <div class="form-group-filtro">
             <input class="form-control input-apellidos" type="text" id="apellidos" name="apellidos" maxlength="50"
-                pattern="[a-zA-Z]{1,50}" autocomplete="off" placeholder=" " title="Solo letras, máximo 50 caracteres"
+                pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ \-]{1,50}" autocomplete="off" placeholder=" " title="Solo letras, máximo 50 caracteres"
                 value="<%= filtros.apellidos %>">
             <label class="control-label" for="apellidos">Apellidos</label>
         </div>
 
         <div class="form-group-filtro">
             <input class="form-control input-departamento" type="text" id="departamento" name="departamento" maxlength="50"
-                pattern="[a-zA-Z]{1,50}" autocomplete="off" placeholder=" " title="Solo letras, máximo 50 caracteres"
+                pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ \-]{1,50}" autocomplete="off" placeholder=" " title="Solo letras, máximo 50 caracteres"
                 value="<%= filtros.departamento %>">
             <label class="control-label" for="departamento">Departamento</label>
         </div>
