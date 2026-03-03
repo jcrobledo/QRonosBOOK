@@ -101,9 +101,45 @@ const findAllDep = async () => {
 
 /********************************************************************************************/
 
+const findDepById = async (id) => {
+    const sql = 'SELECT * FROM departamentos WHERE id = ?';
+    try {
+        const [rows] = await pool.execute(sql, [id]);
+        return rows;      
+    } catch (error) {
+        throw error;
+    };      
+};
+
+/********************************************************************************************/
+
+const createTrab = async (trabajador) => {
+    const sql = `
+        INSERT INTO trabajadores (dni, nombre, apellidos, email, departamento, password)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    try {
+        const [rows] = await pool.execute(sql, [
+            trabajador.dni,
+            trabajador.nombre,
+            trabajador.apellidos,
+            trabajador.email,
+            trabajador.departamento,
+            trabajador.password
+        ]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 module.exports = {      
     findByDniAdmin,
     findByDniTrab,
     findAllTrab,
-    findAllDep
+    findAllDep,
+    findDepById,
+    createTrab
 };

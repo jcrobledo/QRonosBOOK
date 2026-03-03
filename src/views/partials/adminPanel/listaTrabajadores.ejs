@@ -12,7 +12,11 @@
             <span class="texto-largo">Gestión de</span> Trabajadores y Fichajes
         </h2>
         <div class="spacer">
-            <button type="button" class="btFichaje">Nuevo Trabajador</button>
+            <button type="button"
+                hx-get="/adminPanel/trabajadores/alta" 
+                hx-target="#secContenido"
+                hx-push-url="true" 
+                class="btFichaje">Nuevo Trabajador</button>
         </div>
     </div>
 
@@ -30,7 +34,7 @@
                 autocomplete="off" placeholder=" "
                 title="De 1 a 8 números o una letra y debe ir al final"
                 value="<%= filtros.dni %>">
-            <label class="control-label" for="dni">DNI</label>
+            <label class="control-label" for="dniFiltro">DNI</label>
         </div>
 
         <div class="form-group-filtro">
