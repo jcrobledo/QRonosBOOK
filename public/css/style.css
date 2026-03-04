@@ -1058,6 +1058,37 @@ button.btFichaje:hover {
     bottom: 15%;
 }
 
+/* 1. CUANDO HAY EXACTAMENTE 1 FILA */
+.tablaTrabajadores tbody tr:first-child:last-child .dropdown-table ul,
+/* 2. CUANDO HAY EXACTAMENTE 2 FILAS */
+.tablaTrabajadores tbody tr:first-child:nth-last-child(2) .dropdown-table ul,
+.tablaTrabajadores tbody tr:first-child:nth-last-child(2) ~ tr .dropdown-table ul {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 5px;
+    padding: 5px;
+}
+
+/* Ajustes de posición para que el menú lineal no se corte */
+.tablaTrabajadores tbody tr:first-child:last-child .dropdown-table,
+.tablaTrabajadores tbody tr:first-child:nth-last-child(2) .dropdown-table,
+.tablaTrabajadores tbody tr:first-child:nth-last-child(2) ~ tr .dropdown-table {
+    width: max-content !important;
+    min-width: auto !important;
+    right: 70%; /* Lo lanza a la izquierda del botón */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    bottom: auto !important;
+}
+
+/* Estilo de los botones dentro del menú lineal */
+.tablaTrabajadores tbody tr:first-child:last-child .dropdown-table li a,
+.tablaTrabajadores tbody tr:first-child:nth-last-child(2) .dropdown-table li a,
+.tablaTrabajadores tbody tr:first-child:nth-last-child(2) ~ tr .dropdown-table li a {
+    padding: 5px 12px !important;
+    margin: 0 !important;
+}
+
 .btnAcciones {
     width: 35px !important;
     height: 35px !important;
