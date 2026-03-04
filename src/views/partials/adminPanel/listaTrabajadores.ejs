@@ -122,8 +122,20 @@
                                     Modificar
                                 </a>
                             </li>
-                            <li><a href="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>">Eliminar</a></li>
-                            <li><a href="/adminPanel/trabajadores/fichajes/<%= trabajador.dni %>">Ver fichajes</a></li>
+                            <li><a href="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>"
+                                hx-get="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>"
+                                hx-target="#secContenido"
+                                hx-push-url="true">
+                                Eliminar
+                                </a>
+                            </li>
+                            <li><a href="/adminPanel/trabajadores/fichajes/<%= trabajador.dni %>"
+                                hx-get="/adminPanel/trabajadores/fichajes/<%= trabajador.dni %>"
+                                hx-target="#secContenido"
+                                hx-push-url="true">
+                                Ver fichajes
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </td>                             

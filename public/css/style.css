@@ -161,6 +161,47 @@ body {
     /* Mejora la lectura */
 }
 
+.modal-overlay {
+    position: fixed; 
+    top: 0 !important; 
+    left: 0 !important; 
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important; 
+    height: 100% !important;
+    background: rgba(0,0,0,0.1); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    filter: none !important;
+    z-index: 9999 !important;
+}
+.modal-content {
+    background: white; 
+    color: #666666;
+    padding: 1rem; 
+    border-radius: 4px; 
+    text-align: center;
+    border: 1px solid #D13815; 
+    max-width: 450px; 
+    box-shadow: 0 0px 15px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 { 
+    margin: 1rem;   
+    color: #D13815;
+}
+
+.modal-content p {
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-bottom: 2rem;
+}
+
 .loader-gif {
     width: 100px;
     /* Ajusta el tamaño según tu GIF */

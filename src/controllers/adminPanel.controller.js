@@ -605,11 +605,113 @@ const updateTrabajador = async (req, res) => {
 /********************************************************************************************/
 
 const eliminarTrabajador = async (req, res) => {
+
+  const userAdmin = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.params.dni;
+
+  try {
+
+    const trabajador = await model.findByDniTrab(dniTrabajador);
+    const departamento = await model.findDepById(trabajador.departamento);
+    const departamentoNombre = departamento[0].nombre;
+
+    if (isHTMX) {
+      return res.render('partials/adminPanel/eliminarTrabajadores', {
+        title: "Eliminar Trabajador",
+        layout: false,
+        userAdmin,
+        trabajador,
+        departamentoNombre
+      });
+    };
+
+    return res.render("partials/adminPanel/eliminarTrabajadores", {
+      title: "Eliminar Trabajador",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin,
+      trabajador,
+      departamentoNombre
+    });
+
+
+  } catch (error) {
+
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userAdmin
+      });
+    };
+
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin
+    });
+  }
+
 };
 
 /********************************************************************************************/
 
 const deleteTrabajador = async (req, res) => {
+
+  const userAdmin = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.params.dni;  
+
+  try {
+
+    const trabajadorEliminado = await model.findByDniTrab(dniTrabajador);
+    const departamento = await model.findDepById(trabajadorEliminado.departamento);
+      const departamentoNombre = departamento[0].nombre;
+
+    const trabajadorDelete = await model.deleteTrab(dniTrabajador);
+
+    if (isHTMX) {
+      res.setHeader('HX-Replace-Url', '/adminPanel/trabajadores');
+      return res.render('partials/adminPanel/confirmDeleteTrab', {
+        title: "Trabajador Eliminado",
+        layout: false,
+        userAdmin,
+        trabajadorEliminado,
+        departamentoNombre,
+        mensajeExito: "Trabajador eliminado correctamente."
+      });
+    };
+
+    return res.render("partials/adminPanel/confirmDeleteTrab", {
+      title: "Trabajador Eliminado",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin,
+      trabajadorEliminado,
+      departamentoNombre, 
+      mensajeExito: "Trabajador eliminado correctamente."
+    });
+
+  } catch (error) {
+
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userAdmin
+      });
+    };
+
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin
+    });
+  }
+
 };
 
 /********************************************************************************************/
