@@ -115,9 +115,15 @@
                     <button class="btnAcciones">&middot;&middot;&middot;</button>
                     <div class="dropdown-table">
                         <ul>
-                            <li><a href="/modificar/<%= trabajador.dni %>">Modificar</a></li>
-                            <li><a href="/eliminar/<%= trabajador.dni %>">Eliminar</a></li>
-                            <li><a href="/fichajes/<%= trabajador.dni %>">Ver fichajes</a></li>
+                            <li><a href="/adminPanel/trabajadores/editar/<%= trabajador.dni %>"
+                                    hx-get="/adminPanel/trabajadores/editar/<%= trabajador.dni %>"
+                                    hx-target="#secContenido"
+                                    hx-push-url="true">
+                                    Modificar
+                                </a>
+                            </li>
+                            <li><a href="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>">Eliminar</a></li>
+                            <li><a href="/adminPanel/trabajadores/fichajes/<%= trabajador.dni %>">Ver fichajes</a></li>
                         </ul>
                     </div>
                 </td>                             

@@ -118,6 +118,7 @@ const createTrab = async (trabajador) => {
         INSERT INTO trabajadores (dni, nombre, apellidos, email, departamento, password)
         VALUES (?, ?, ?, ?, ?, ?)
     `;
+
     try {
         const [rows] = await pool.execute(sql, [
             trabajador.dni,
@@ -135,11 +136,57 @@ const createTrab = async (trabajador) => {
 
 /********************************************************************************************/
 
+const updateTrab = async (trabajador) => {
+
+    let sql = "";
+    let valores = [];
+
+    if (trabajador.password) {  
+        sql = `
+        UPDATE trabajadores
+        SET nombre = ?, apellidos = ?, email = ?, departamento = ?, password = ?
+        WHERE dni = ?
+        `;        
+        valores = [
+            trabajador.nombre,
+            trabajador.apellidos,
+            trabajador.email,
+            trabajador.departamento,
+            trabajador.password,
+            trabajador.dni
+        ];
+
+    } else {
+        sql = `
+        UPDATE trabajadores
+        SET nombre = ?, apellidos = ?, email = ?, departamento = ?
+        WHERE dni = ?
+        `;
+        valores = [
+            trabajador.nombre,
+            trabajador.apellidos,
+            trabajador.email,
+            trabajador.departamento,            
+            trabajador.dni
+        ];
+    };    
+
+    try {
+        const [rows] = await pool.execute(sql, valores);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 module.exports = {      
     findByDniAdmin,
     findByDniTrab,
     findAllTrab,
     findAllDep,
-    findDepById,
-    createTrab
+    findDepById,    
+    createTrab,
+    updateTrab
 };

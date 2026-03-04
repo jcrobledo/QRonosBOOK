@@ -640,6 +640,22 @@ button.btFichaje:hover {
     text-align: center; 
 }
 
+.info-style-crud {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 350px;
+    background-color: #fff4e6;
+    color: #D13815;
+    border-radius: 5px;
+    border: 1px solid #E8967E;
+    font-size: 18px;
+    box-sizing: border-box;   
+    text-align: center;     
+}
+
 .logout-style {
     padding: 15px 20px;
     display: flex;

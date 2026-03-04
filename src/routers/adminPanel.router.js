@@ -46,6 +46,7 @@ const rulesAlta = [
     .escape()
     .notEmpty(),
   body('password')
+    .optional({ checkFalsy: true })
     .trim()
     .isLength({ min: 8, max: 8 })
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*+])[a-zA-Z\d!@#$%^&*+]{8}$/)    
@@ -59,8 +60,9 @@ router.get("/trabajadores", vToken.verifyTokenAdmin, controller.listTrabajadores
 router.get("/trabajadores/alta", vToken.verifyTokenAdmin, controller.altaTrabajadores);
 router.post("/trabajadores/alta", vToken.verifyTokenAdmin, rulesAlta, controller.createTrabajador);
 router.get("/trabajadores/editar/:dni", vToken.verifyTokenAdmin, controller.editarTrabajador);
-router.post("/trabajadores/editar/:dni", vToken.verifyTokenAdmin, rulesAlta, controller.updateTrabajador);
-router.delete("/trabajadores/eliminar/:dni", vToken.verifyTokenAdmin, controller.eliminarTrabajador);
+router.put("/trabajadores/editar/:dni", vToken.verifyTokenAdmin, rulesAlta, controller.updateTrabajador);
+router.get("/trabajadores/eliminar/:dni", vToken.verifyTokenAdmin, controller.eliminarTrabajador);
+router.delete("/trabajadores/eliminar/:dni", vToken.verifyTokenAdmin, controller.deleteTrabajador);
 router.get("/logout", controller.logout);
 
 module.exports = router;  //para poder exportar la ruta a otros códigos
