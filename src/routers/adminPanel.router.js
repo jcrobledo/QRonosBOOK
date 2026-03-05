@@ -63,6 +63,8 @@ router.get("/trabajadores/editar/:dni", vToken.verifyTokenAdmin, controller.edit
 router.put("/trabajadores/editar/:dni", vToken.verifyTokenAdmin, rulesAlta, controller.updateTrabajador);
 router.get("/trabajadores/eliminar/:dni", vToken.verifyTokenAdmin, controller.eliminarTrabajador);
 router.delete("/trabajadores/eliminar/:dni", vToken.verifyTokenAdmin, controller.deleteTrabajador);
+router.get("/trabajadores/cambiarPass/:dni", vToken.verifyTokenAdmin, controller.cambiarPass);
+router.put("/trabajadores/cambiarPass/:dni", vToken.verifyTokenAdmin, controller.changePass);
 router.get("/logout", controller.logout);
 
 module.exports = router;  //para poder exportar la ruta a otros códigos

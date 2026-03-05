@@ -121,16 +121,9 @@
                                     hx-push-url="true">
                                     Modificar
                                 </a>
-                            </li>
-                            <li><a href="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>"
-                                hx-get="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>"
-                                hx-target="#secContenido"
-                                hx-push-url="true">
-                                Eliminar
-                                </a>
-                            </li>
-                            <li><a href=""
-                                hx-get=""
+                            </li>                            
+                            <li><a href="/adminPanel/trabajadores/cambiarPass/<%= trabajador.dni %>"
+                                hx-get="/adminPanel/trabajadores/cambiarPass/<%= trabajador.dni %>"
                                 hx-target="#secContenido"
                                 hx-push-url="true">
                                 Cambiar Contraseña
@@ -141,6 +134,13 @@
                                 hx-target="#secContenido"
                                 hx-push-url="true">
                                 Ver fichajes
+                                </a>
+                            </li>
+                            <li><a href="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>"
+                                hx-get="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>"
+                                hx-target="#secContenido"
+                                hx-push-url="true">
+                                Eliminar
                                 </a>
                             </li>
                         </ul>

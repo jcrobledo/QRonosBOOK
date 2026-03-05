@@ -195,6 +195,20 @@ const deleteTrab = async (dni) => {
 
 /********************************************************************************************/
 
+const updatePassTrab = async (dni, password) => {
+
+    const sql = 'UPDATE trabajadores SET password = ? WHERE dni = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [password, dni]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 module.exports = {      
     findByDniAdmin,
     findByDniTrab,
@@ -203,5 +217,6 @@ module.exports = {
     findDepById,    
     createTrab,
     updateTrab,
-    deleteTrab
+    deleteTrab,
+    updatePassTrab
 };

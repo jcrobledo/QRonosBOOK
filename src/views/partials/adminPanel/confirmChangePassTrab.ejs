@@ -1,0 +1,60 @@
+<div class="cajasAdminTrabFilter fade-in">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/adminPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            Cambiar Contraseña de Trabajadores
+        </h2>
+        <div class="spacer">            
+        </div>
+    </div> 
+
+    <div class="contenedor-alertas-crud">         
+        <% if (typeof mensajeExito !== 'undefined' && mensajeExito) { %>
+            <div class="alert-style-crud-ok">
+                <span class="icono-check">&#10004;</span>
+                <p><%- mensajeExito %></p>
+            </div>
+        <% } %>
+    </div>
+
+    <form class="formularioAlta">
+        <div class="fila-mixta">
+            <div class="form-group-crud">
+                <input class="form-control input-dni readonly-style" type="text" id="ConfirmDni"
+                    value="<%= trabajador.dni %>" readonly>
+                <label class="control-label" for="ConfirmDni">DNI</label>
+            </div>
+
+            <div class="form-group-crud">
+                <input class="form-control input-nombre readonly-style" type="text" id="nombre"  
+                     value="<%= trabajador.nombre %>" readonly>
+                <label class="control-label" for="nombre">Nombre</label>
+            </div>
+        </div>
+
+        <div class="form-group-crud">
+            <input class="form-control readonly-style" type="text" id="apellidos"
+                value="<%= trabajador.apellidos %>" readonly>
+            <label class="control-label" for="apellidos">Apellidos</label>
+        </div>        
+
+        <div class="fila-botones">
+            <button type="button" 
+                hx-get="/adminPanel/trabajadores" 
+                hx-target="#secContenido"
+                hx-push-url="true">
+                Volver  
+            </button>                    
+        </div>
+    </form>    
+</div>
+
+
+

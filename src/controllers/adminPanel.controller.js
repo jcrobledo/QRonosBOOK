@@ -280,7 +280,7 @@ const createTrabajador = async (req, res) => {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS,
           },
-        });   
+        });
 
         try {
           const textoEmail = "QronosBOOK - Nueva Alta en el Sistema Como Trabajador - Credenciales de Acceso DNI y Contraseña: " + passwordSendEmail;
@@ -318,9 +318,9 @@ const createTrabajador = async (req, res) => {
         };
 
         nuevoTrabajador.password = await bcrypt.hash(nuevoTrabajador.password, 10);
-        const trabajador = await model.createTrab(nuevoTrabajador);        
+        const trabajador = await model.createTrab(nuevoTrabajador);
 
-        const mensajeExito = `Trabajador creado correctamente.<br>Contraseña enviada a:<br>${nuevoTrabajador.email}`;             
+        const mensajeExito = `Trabajador creado correctamente.<br>Contraseña enviada a:<br>${nuevoTrabajador.email}`;
 
         if (isHTMX) {
           return res.render('partials/adminPanel/confirmAltaTrab', {
@@ -420,7 +420,7 @@ const editarTrabajador = async (req, res) => {
     const departamentos = await model.findAllDep();
     const departamentoMap = {};
     departamentos.forEach((departamento) => {
-    departamentoMap[departamento.id] = departamento.nombre;
+      departamentoMap[departamento.id] = departamento.nombre;
     });
 
     if (isHTMX) {
@@ -491,7 +491,7 @@ const updateTrabajador = async (req, res) => {
       if (trabajadorActualizado.password) {
 
         trabajadorActualizado.password = await bcrypt.hash(trabajadorActualizado.password, 10);
-        mensajeExito = `Trabajador actualizado correctamente.<br>Contraseña enviada a:<br>${trabajadorActualizado.email}`;       
+        mensajeExito = `Trabajador actualizado correctamente.<br>Contraseña enviada a:<br>${trabajadorActualizado.email}`;
 
         const transporter = nodemailer.createTransport({
           host: process.env.SMTP_HOST,
@@ -500,7 +500,7 @@ const updateTrabajador = async (req, res) => {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS,
           },
-        });  
+        });
 
         try {
           const textoEmail = "QronosBOOK - Modificación de Datos - Nueva Contraseña: " + req.body.password;
@@ -540,29 +540,29 @@ const updateTrabajador = async (req, res) => {
         };
 
       } else {
-        delete trabajadorActualizado.password; 
-      };      
+        delete trabajadorActualizado.password;
+      };
 
-      const trabajador = await model.updateTrab(trabajadorActualizado);      
+      const trabajador = await model.updateTrab(trabajadorActualizado);
 
-      if (isHTMX) {    
-        res.setHeader('HX-Replace-Url', '/adminPanel/trabajadores');     
+      if (isHTMX) {
+        res.setHeader('HX-Replace-Url', '/adminPanel/trabajadores');
         return res.render('partials/adminPanel/confirmEditTrab', {
           title: "Modificación Trabajador",
-          layout: false,          
+          layout: false,
           userAdmin,
-          trabajadorActualizado,      
-          departamentoNombre,    
+          trabajadorActualizado,
+          departamentoNombre,
           mensajeExito
         });
       };
 
       return res.render("partials/adminPanel/confirmEditTrab", {
         title: "Modificación Trabajador",
-        layout: "./layouts/layout-adminPanel",        
+        layout: "./layouts/layout-adminPanel",
         userAdmin,
-        trabajadorActualizado,     
-        departamentoNombre,   
+        trabajadorActualizado,
+        departamentoNombre,
         mensajeExito
       });
 
@@ -583,7 +583,7 @@ const updateTrabajador = async (req, res) => {
       });
     };
 
-  } else {    
+  } else {
     console.error("Error general Express-validator:", result);
     if (isHTMX) {
       res.setHeader('HX-Retarget', '#secContenido');
@@ -662,13 +662,13 @@ const deleteTrabajador = async (req, res) => {
 
   const userAdmin = req.user.nombre + " " + req.user.apellidos;
   const isHTMX = req.headers['hx-request'];
-  const dniTrabajador = req.params.dni;  
+  const dniTrabajador = req.params.dni;
 
   try {
 
     const trabajadorEliminado = await model.findByDniTrab(dniTrabajador);
     const departamento = await model.findDepById(trabajadorEliminado.departamento);
-      const departamentoNombre = departamento[0].nombre;
+    const departamentoNombre = departamento[0].nombre;
 
     const trabajadorDelete = await model.deleteTrab(dniTrabajador);
 
@@ -689,7 +689,7 @@ const deleteTrabajador = async (req, res) => {
       layout: "./layouts/layout-adminPanel",
       userAdmin,
       trabajadorEliminado,
-      departamentoNombre, 
+      departamentoNombre,
       mensajeExito: "Trabajador eliminado correctamente."
     });
 
@@ -710,6 +710,165 @@ const deleteTrabajador = async (req, res) => {
       layout: "./layouts/layout-adminPanel",
       userAdmin
     });
+  }
+
+};
+
+/********************************************************************************************/
+
+const cambiarPass = async (req, res) => {
+
+  const userAdmin = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.params.dni;
+
+  try {
+
+    const trabajador = await model.findByDniTrab(dniTrabajador);
+
+    if (isHTMX) {
+      return res.render('partials/adminPanel/cambiarPassTrabajadores', {
+        title: "Cambiar Contraseña Trabajador",
+        layout: false,
+        userAdmin,
+        trabajador
+      });
+    };
+
+    return res.render("partials/adminPanel/cambiarPassTrabajadores", {
+      title: "Cambiar Contraseña Trabajador",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin,
+      trabajador
+    });
+
+  } catch (error) {
+
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userAdmin
+      });
+    };
+
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin
+    });
+
+  }
+
+};
+
+/********************************************************************************************/
+
+const changePass = async (req, res) => {
+
+  const userAdmin = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+
+  const trabajador = {
+    dni: req.params.dni,
+    nombre: req.body.nombre,
+    apellidos: req.body.apellidos,
+    email: req.body.email,
+    nuevaPassword: req.body.password,
+  };  
+
+  try {
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    const textoEmail = "QronosBOOK - Modificación de Contraseña: " + trabajador.nuevaPassword;
+    const info = await transporter.sendMail({
+      from: "jcrm-costero@alwaysdata.net",
+      to: trabajador.email,
+      subject: "QRonosBOOK - Modificación de Contraseña",
+      text: textoEmail,
+      html: `<div style="width: 100%; text-align: center; margin-bottom: 20px;">
+                      <img src="https://jcrm-costero.alwaysdata.net//images/logo04.png" style="display: block; margin: 0 auto; max-width: 200px; height: auto;">        
+                    </div>
+                    <div style="text-align: center; width: 100%;">
+                      <p style="font-family: Arial, sans-serif; font-size: 20px; color: darkblue; font-weight: bold;">${trabajador.dni} - ${trabajador.nombre} ${trabajador.apellidos}</p>                      
+                      <p style="font-family: Arial, sans-serif; font-size: 20px; color: darkblue; font-weight: bold;">NUEVA CONTRASEÑA: ${trabajador.nuevaPassword}</p>
+                    </div>`
+    });
+
+    // console.info(info); // información del envío del correo. Descomentar si hay error
+  } catch (error) {
+
+    console.error("Error Enviando Datos por Email al Trabajador: ", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('adminPanel/errorSendMail', {
+        title: "Error Enviando Email",
+        layout: false,
+        userAdmin
+      });
+    };
+    return res.render("adminPanel/errorSendMail", {
+      title: "Error Enviando Email",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin
+    });
+
+  };
+
+  try {
+
+    trabajador.nuevaPassword = await bcrypt.hash(trabajador.nuevaPassword, 10);
+    mensajeExito = `Contraseña actualizada correctamente.<br>Contraseña enviada a:<br>${trabajador.email}`;
+
+    const trabajadorActualizado = await model.updatePassTrab(trabajador.dni, trabajador.nuevaPassword);
+
+    if (isHTMX) {
+      res.setHeader('HX-Replace-Url', '/adminPanel/trabajadores');
+      return res.render('partials/adminPanel/confirmChangePassTrab', {
+        title: "Contraseña Actualizada",
+        layout: false,
+        userAdmin,
+        trabajador,
+        mensajeExito
+      });
+    };
+
+    return res.render("partials/adminPanel/confirmChangePassTrab", {
+      title: "Contraseña Actualizada",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin,
+      trabajador,
+      mensajeExito
+    });
+
+  } catch (error) {
+
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userAdmin
+      });
+    };
+
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin
+    });
+
   }
 
 };
@@ -758,5 +917,7 @@ module.exports = {
   updateTrabajador,
   eliminarTrabajador,
   deleteTrabajador,
+  cambiarPass,
+  changePass,
   logout
 };
