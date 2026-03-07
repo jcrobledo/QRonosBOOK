@@ -2,7 +2,6 @@ const pool = require('./mysql');
 
 /********************************************************************************************/
 
-
 const findByDniAdmin = async (dni) => {
     const sql = 'SELECT * FROM administradores WHERE dni = ?';
     try {
@@ -11,6 +10,46 @@ const findByDniAdmin = async (dni) => {
     } catch (error) {
         throw error;
     };      
+};
+
+/********************************************************************************************/
+
+const findAllAdmin = async ({ sort, dir, limit, offset }) => {
+    
+    const queryBase = `
+        FROM administradores a
+        INNER JOIN trabajadores t ON a.dni = t.dni`;
+    
+    const sortMapping = {
+        'dni': 'a.dni',
+        'nombre': 't.nombre',
+        'apellidos': 't.apellidos',
+        'createdAt': 'a.createdAt'
+    };
+
+    const orderBy = sortMapping[sort] || 'a.dni';
+    const orderDir = (dir && dir.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
+    
+    const selectQuery = `
+        SELECT a.dni, a.createdAt, t.nombre, t.apellidos 
+        ${queryBase} 
+        ORDER BY ${orderBy} ${orderDir} 
+        LIMIT ? OFFSET ?`;
+        
+    const countQuery = `SELECT COUNT(*) as total ${queryBase}`;
+
+    try {
+        const [rows] = await pool.execute(selectQuery, [String(limit), String(offset)]);
+        const [[{ total }]] = await pool.execute(countQuery);
+
+        return { 
+            administradores: rows, 
+            totalCount: total 
+        };
+    } catch (error) {
+        console.error("Error al obtener administradores:", error);
+        throw error;
+    }      
 };
 
 /********************************************************************************************/
@@ -136,6 +175,22 @@ const createTrab = async (trabajador) => {
 
 /********************************************************************************************/
 
+const createAdmin = async (dni) => {
+    const sql = `
+        INSERT INTO administradores (dni)
+        VALUES (?)
+    `;
+
+    try {
+        const [rows] = await pool.execute(sql, [dni]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 const updateTrab = async (trabajador) => {
 
     let sql = "";
@@ -195,6 +250,20 @@ const deleteTrab = async (dni) => {
 
 /********************************************************************************************/
 
+const deleteAdmin = async (dni) => {
+ 
+    const sql = 'DELETE FROM administradores WHERE dni = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [dni]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 const updatePassTrab = async (dni, password) => {
 
     const sql = 'UPDATE trabajadores SET password = ? WHERE dni = ?';
@@ -211,12 +280,15 @@ const updatePassTrab = async (dni, password) => {
 
 module.exports = {      
     findByDniAdmin,
+    findAllAdmin,
     findByDniTrab,
     findAllTrab,
     findAllDep,
     findDepById,    
     createTrab,
+    createAdmin,
     updateTrab,
     deleteTrab,
+    deleteAdmin,
     updatePassTrab
 };

@@ -9,7 +9,7 @@
                 class="iconoScale">            
         </div>
         <h2 class="correcto tituloCabecera">
-            <span class="texto-largo">Gestión de</span> Trabajadores y Fichajes
+            <span class="texto-largo">Gestión de </span>Trabajadores
         </h2>
         <div class="spacer">
             <button type="button"
@@ -78,7 +78,7 @@
                 <th hx-get="/adminPanel/trabajadores?sort=dni&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
-                    class="<%= currentSort === 'dni' ? 'sort-' + currentDir.toLowerCase() : '' %>">
+                    class="<%= currentSort === 'dni' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 110px;">
                 DNI</th>
                 <th hx-get="/adminPanel/trabajadores?sort=nombre&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
@@ -100,7 +100,7 @@
                     hx-include=".formularioFiltro"
                     class="<%= currentSort === 'departamento' ? 'sort-' + currentDir.toLowerCase() : '' %>">
                 Departamento</th>
-                <th class="no-sort">Acciones</th>
+                <th class="no-sort" style="width: 110px;">Acciones</th>
             </tr>
         </thead>
         <tbody id="tablaTrabajadoresBody">

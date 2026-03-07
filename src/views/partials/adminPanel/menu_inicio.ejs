@@ -13,19 +13,28 @@
                 hx-target="#secContenido" 
                 hx-push-url="true"
                 style="cursor:pointer"
-                data-text="Trabajadores y Fichajes">
-                Trabajadores y Fichajes
+                data-text="Trabajadores">
+                Trabajadores
             </h3>
         </div>
     </section>
     <section>
         <div class="content">
-            <a href="" class="icon">
+            <div class="icon"
+                hx-get="/adminPanel/administradores" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer">
                 <img src="/images/administradores.png" style="height:7rem;width:7rem" class="iconoScale">
-            </a>
-            <a href="" style="text-decoration:none">
-                <h3 class="h3_eleMenu" data-text="Administradores">Administradores</h3>
-            </a>
+            </div>            
+            <h3 class="h3_eleMenu"
+                hx-get="/adminPanel/administradores" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer"
+                data-text="Administradores">
+                Administradores
+            </h3>            
         </div>
     </section>
     <section>
@@ -35,6 +44,16 @@
             </a>
             <a href="" style="text-decoration:none">
                 <h3 class="h3_eleMenu" data-text="Departamentos">Departamentos</h3>
+            </a>
+        </div>
+    </section>
+    <section>
+        <div class="content">
+            <a href="" class="icon">
+                <img src="/images/fichajes.png" style="height:7rem;width:7rem" class="iconoScale">
+            </a>
+            <a href="" style="text-decoration:none">
+                <h3 class="h3_eleMenu" data-text="Fichajes">Fichajes</h3>
             </a>
         </div>
     </section>

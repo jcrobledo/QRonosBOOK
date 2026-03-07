@@ -251,45 +251,42 @@ const createTrabajador = async (req, res) => {
   const userAdmin = req.user.nombre + " " + req.user.apellidos;
   const isHTMX = req.headers['hx-request'];
 
-  const result = validationResult(req);
+  let nuevoTrabajador = {
+    dni: req.body.dni,
+    nombre: req.body.nombre,
+    apellidos: req.body.apellidos,
+    departamento: req.body.departamento,
+    email: req.body.email,
+    password: req.body.password
+  };
 
-  if (result.isEmpty()) {
-    let nuevoTrabajador = {
-      dni: req.body.dni,
-      nombre: req.body.nombre,
-      apellidos: req.body.apellidos,
-      departamento: req.body.departamento,
-      email: req.body.email,
-      password: req.body.password
-    };
+  try {
 
-    try {
+    const existeDni = await model.findByDniTrab(nuevoTrabajador.dni);
 
-      const existeDni = await model.findByDniTrab(nuevoTrabajador.dni);
+    if (!existeDni) {
 
-      if (!existeDni) {
+      const passwordSendEmail = nuevoTrabajador.password;
+      const departamento = await model.findDepById(nuevoTrabajador.departamento);
+      const departamentoNombre = departamento[0].nombre;
 
-        const passwordSendEmail = nuevoTrabajador.password;
-        const departamento = await model.findDepById(nuevoTrabajador.departamento);
-        const departamentoNombre = departamento[0].nombre;
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
 
-        const transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST,
-          port: process.env.SMTP_PORT,
-          auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-          },
-        });
-
-        try {
-          const textoEmail = "QronosBOOK - Nueva Alta en el Sistema Como Trabajador - Credenciales de Acceso DNI y Contraseña: " + passwordSendEmail;
-          const info = await transporter.sendMail({
-            from: "jcrm-costero@alwaysdata.net",
-            to: nuevoTrabajador.email,
-            subject: "QRonosBOOK - Nueva Alta en el Sistema Como Trabajador",
-            text: textoEmail,
-            html: `<div style="width: 100%; text-align: center; margin-bottom: 20px;">
+      try {
+        const textoEmail = "QronosBOOK - Nueva Alta en el Sistema Como Trabajador - Credenciales de Acceso DNI y Contraseña: " + passwordSendEmail;
+        const info = await transporter.sendMail({
+          from: "jcrm-costero@alwaysdata.net",
+          to: nuevoTrabajador.email,
+          subject: "QRonosBOOK - Nueva Alta en el Sistema Como Trabajador",
+          text: textoEmail,
+          html: `<div style="width: 100%; text-align: center; margin-bottom: 20px;">
                       <img src="https://jcrm-costero.alwaysdata.net//images/logo04.png" style="display: block; margin: 0 auto; max-width: 200px; height: auto;">        
                     </div>
                     <div style="text-align: center; width: 100%;">
@@ -298,106 +295,90 @@ const createTrabajador = async (req, res) => {
                       <p style="font-family: Arial, sans-serif; font-size: 20px; color: darkblue; font-weight: bold;">DEPARTAMENTO: ${departamentoNombre}</p>
                       <p style="font-family: Arial, sans-serif; font-size: 20px; color: darkblue; font-weight: bold;">CONTRASEÑA: ${passwordSendEmail}</p>
                     </div>`
-          });
-          // console.info(info); // información del envío del correo. Descomentar si hay error
-        } catch (error) {
-          console.error("Error Enviando Datos por Email al Trabajador: ", error);
-          if (isHTMX) {
-            res.setHeader('HX-Retarget', '#secContenido');
-            return res.render('adminPanel/errorSendMail', {
-              title: "Error Enviando Email",
-              layout: false,
-              userAdmin
-            });
-          };
-          return res.render("adminPanel/errorSendMail", {
+        });
+        // console.info(info); // información del envío del correo. Descomentar si hay error
+      } catch (error) {
+        console.error("Error Enviando Datos por Email al Trabajador: ", error);
+        if (isHTMX) {
+          res.setHeader('HX-Retarget', '#secContenido');
+          return res.render('adminPanel/errorSendMail', {
             title: "Error Enviando Email",
-            layout: "./layouts/layout-adminPanel",
+            layout: false,
             userAdmin
           });
         };
-
-        nuevoTrabajador.password = await bcrypt.hash(nuevoTrabajador.password, 10);
-        const trabajador = await model.createTrab(nuevoTrabajador);
-
-        const mensajeExito = `Trabajador creado correctamente.<br>Contraseña enviada a:<br>${nuevoTrabajador.email}`;
-
-        if (isHTMX) {
-          return res.render('partials/adminPanel/confirmAltaTrab', {
-            title: "Alta Trabajador",
-            layout: false,
-            userAdmin,
-            nuevoTrabajador,
-            departamentoNombre,
-            mensajeExito
-          });
-        };
-
-        return res.render("partials/adminPanel/confirmAltaTrab", {
-          title: "Alta Trabajador",
+        return res.render("adminPanel/errorSendMail", {
+          title: "Error Enviando Email",
           layout: "./layouts/layout-adminPanel",
+          userAdmin
+        });
+      };
+
+      nuevoTrabajador.password = await bcrypt.hash(nuevoTrabajador.password, 10);
+      const trabajador = await model.createTrab(nuevoTrabajador);
+
+      const mensajeExito = `Trabajador creado correctamente.<br>Contraseña enviada a:<br>${nuevoTrabajador.email}`;
+
+      if (isHTMX) {
+        return res.render('partials/adminPanel/confirmAltaTrab', {
+          title: "Alta Trabajador",
+          layout: false,
           userAdmin,
           nuevoTrabajador,
           departamentoNombre,
           mensajeExito
         });
+      };
 
-      } else {
+      return res.render("partials/adminPanel/confirmAltaTrab", {
+        title: "Alta Trabajador",
+        layout: "./layouts/layout-adminPanel",
+        userAdmin,
+        nuevoTrabajador,
+        departamentoNombre,
+        mensajeExito
+      });
 
-        const departamento = await model.findDepById(existeDni.departamento);
-        const departamentoNombre = departamento[0].nombre;
-        nuevoTrabajador = existeDni;
+    } else {
 
-        const mensajeError = "El DNI ya existe en QRonosBOOK.<br>Trabajador NO creado";
+      const departamento = await model.findDepById(existeDni.departamento);
+      const departamentoNombre = departamento[0].nombre;
+      nuevoTrabajador = existeDni;
 
-        if (isHTMX) {
-          return res.render('partials/adminPanel/confirmAltaTrab', {
-            title: "Error DNI Existente",
-            layout: false,
-            userAdmin,
-            nuevoTrabajador,
-            departamentoNombre,
-            mensajeError
-          });
-        };
-        return res.render("partials/adminPanel/confirmAltaTrab", {
+      const mensajeError = "El DNI ya existe en QRonosBOOK.<br>Trabajador NO creado";
+
+      if (isHTMX) {
+        return res.render('partials/adminPanel/confirmAltaTrab', {
           title: "Error DNI Existente",
-          layout: "./layouts/layout-adminPanel",
+          layout: false,
           userAdmin,
           nuevoTrabajador,
           departamentoNombre,
           mensajeError
         });
       };
-
-    } catch (error) {
-      console.error("Error general de acceso a BBDD:", error);
-      if (isHTMX) {
-        res.setHeader('HX-Retarget', '#secContenido');
-        return res.render('adminPanel/errorGeneral', {
-          title: "Error General",
-          layout: false,
-          userAdmin
-        });
-      };
-      return res.render("adminPanel/errorGeneral", {
-        title: "Error General",
+      return res.render("partials/adminPanel/confirmAltaTrab", {
+        title: "Error DNI Existente",
         layout: "./layouts/layout-adminPanel",
-        userAdmin
+        userAdmin,
+        nuevoTrabajador,
+        departamentoNombre,
+        mensajeError
       });
     };
-  } else {
-    console.error("Error general Express-validator:", result);
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
     if (isHTMX) {
       res.setHeader('HX-Retarget', '#secContenido');
-      return res.render('adminPanel/errorValidacionDatos', {
-        title: "Error de Validación",
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
         layout: false,
         userAdmin
       });
-    }
-    return res.render("adminPanel/errorValidacionDatos", {
-      title: "Error de Validación",
+    };
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
       layout: "./layouts/layout-adminPanel",
       userAdmin
     });
@@ -468,48 +449,44 @@ const updateTrabajador = async (req, res) => {
   const userAdmin = req.user.nombre + " " + req.user.apellidos;
   const isHTMX = req.headers['hx-request'];
 
-  const result = validationResult(req);
+  const dniTrabajador = req.params.dni;
+  const trabajadorActualizado = {
+    dni: dniTrabajador,
+    nombre: req.body.nombre,
+    apellidos: req.body.apellidos,
+    departamento: req.body.departamento,
+    email: req.body.email,
+    password: req.body.password
+  };
 
-  if (result.isEmpty()) {
+  try {
 
-    const dniTrabajador = req.params.dni;
-    const trabajadorActualizado = {
-      dni: dniTrabajador,
-      nombre: req.body.nombre,
-      apellidos: req.body.apellidos,
-      departamento: req.body.departamento,
-      email: req.body.email,
-      password: req.body.password
-    };
+    let mensajeExito = "Trabajador actualizado correctamente.";
+    const departamento = await model.findDepById(trabajadorActualizado.departamento);
+    const departamentoNombre = departamento[0].nombre;
 
-    try {
+    if (trabajadorActualizado.password) {
 
-      let mensajeExito = "Trabajador actualizado correctamente.";
-      const departamento = await model.findDepById(trabajadorActualizado.departamento);
-      const departamentoNombre = departamento[0].nombre;
+      trabajadorActualizado.password = await bcrypt.hash(trabajadorActualizado.password, 10);
+      mensajeExito = `Trabajador actualizado correctamente.<br>Contraseña enviada a:<br>${trabajadorActualizado.email}`;
 
-      if (trabajadorActualizado.password) {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
 
-        trabajadorActualizado.password = await bcrypt.hash(trabajadorActualizado.password, 10);
-        mensajeExito = `Trabajador actualizado correctamente.<br>Contraseña enviada a:<br>${trabajadorActualizado.email}`;
-
-        const transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST,
-          port: process.env.SMTP_PORT,
-          auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-          },
-        });
-
-        try {
-          const textoEmail = "QronosBOOK - Modificación de Datos - Nueva Contraseña: " + req.body.password;
-          const info = await transporter.sendMail({
-            from: "jcrm-costero@alwaysdata.net",
-            to: trabajadorActualizado.email,
-            subject: "QRonosBOOK - Modificación de Datos - Contraseña Actualizada",
-            text: textoEmail,
-            html: `<div style="width: 100%; text-align: center; margin-bottom: 20px;">
+      try {
+        const textoEmail = "QronosBOOK - Modificación de Datos - Nueva Contraseña: " + req.body.password;
+        const info = await transporter.sendMail({
+          from: "jcrm-costero@alwaysdata.net",
+          to: trabajadorActualizado.email,
+          subject: "QRonosBOOK - Modificación de Datos - Contraseña Actualizada",
+          text: textoEmail,
+          html: `<div style="width: 100%; text-align: center; margin-bottom: 20px;">
                       <img src="https://jcrm-costero.alwaysdata.net//images/logo04.png" style="display: block; margin: 0 auto; max-width: 200px; height: auto;">        
                     </div>
                     <div style="text-align: center; width: 100%;">
@@ -518,83 +495,66 @@ const updateTrabajador = async (req, res) => {
                       <p style="font-family: Arial, sans-serif; font-size: 20px; color: darkblue; font-weight: bold;">DEPARTAMENTO: ${departamentoNombre}</p>
                       <p style="font-family: Arial, sans-serif; font-size: 20px; color: darkblue; font-weight: bold;">NUEVA CONTRASEÑA: ${req.body.password}</p>
                     </div>`
-          });
+        });
 
-          // console.info(info); // información del envío del correo. Descomentar si hay error
-        } catch (error) {
+        // console.info(info); // información del envío del correo. Descomentar si hay error
+      } catch (error) {
 
-          console.error("Error Enviando Datos por Email al Trabajador: ", error);
-          if (isHTMX) {
-            res.setHeader('HX-Retarget', '#secContenido');
-            return res.render('adminPanel/errorSendMail', {
-              title: "Error Enviando Email",
-              layout: false,
-              userAdmin
-            });
-          };
-          return res.render("adminPanel/errorSendMail", {
+        console.error("Error Enviando Datos por Email al Trabajador: ", error);
+        if (isHTMX) {
+          res.setHeader('HX-Retarget', '#secContenido');
+          return res.render('adminPanel/errorSendMail', {
             title: "Error Enviando Email",
-            layout: "./layouts/layout-adminPanel",
+            layout: false,
             userAdmin
           });
         };
-
-      } else {
-        delete trabajadorActualizado.password;
-      };
-
-      const trabajador = await model.updateTrab(trabajadorActualizado);
-
-      if (isHTMX) {
-        res.setHeader('HX-Replace-Url', '/adminPanel/trabajadores');
-        return res.render('partials/adminPanel/confirmEditTrab', {
-          title: "Modificación Trabajador",
-          layout: false,
-          userAdmin,
-          trabajadorActualizado,
-          departamentoNombre,
-          mensajeExito
+        return res.render("adminPanel/errorSendMail", {
+          title: "Error Enviando Email",
+          layout: "./layouts/layout-adminPanel",
+          userAdmin
         });
       };
 
-      return res.render("partials/adminPanel/confirmEditTrab", {
+    } else {
+      delete trabajadorActualizado.password;
+    };
+
+    const trabajador = await model.updateTrab(trabajadorActualizado);
+
+    if (isHTMX) {
+      res.setHeader('HX-Replace-Url', '/adminPanel/trabajadores');
+      return res.render('partials/adminPanel/confirmEditTrab', {
         title: "Modificación Trabajador",
-        layout: "./layouts/layout-adminPanel",
+        layout: false,
         userAdmin,
         trabajadorActualizado,
         departamentoNombre,
         mensajeExito
       });
-
-    } catch (error) {
-      console.error("Error general de acceso a BBDD:", error);
-      if (isHTMX) {
-        res.setHeader('HX-Retarget', '#secContenido');
-        return res.render('adminPanel/errorGeneral', {
-          title: "Error General",
-          layout: false,
-          userAdmin
-        });
-      }
-      return res.render("adminPanel/errorGeneral", {
-        title: "Error General",
-        layout: "./layouts/layout-adminPanel",
-        userAdmin
-      });
     };
 
-  } else {
-    console.error("Error general Express-validator:", result);
+    return res.render("partials/adminPanel/confirmEditTrab", {
+      title: "Modificación Trabajador",
+      layout: "./layouts/layout-adminPanel",
+      userAdmin,
+      trabajadorActualizado,
+      departamentoNombre,
+      mensajeExito
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
     if (isHTMX) {
       res.setHeader('HX-Retarget', '#secContenido');
-      return res.render('adminPanel/errorValidacionDatos', {
-        title: "Error de Validación",
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
         layout: false,
         userAdmin
       });
     }
-    return res.render("adminPanel/errorValidacionDatos", {
-      title: "Error de Validación",
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
       layout: "./layouts/layout-adminPanel",
       userAdmin
     });
@@ -777,7 +737,7 @@ const changePass = async (req, res) => {
     apellidos: req.body.apellidos,
     email: req.body.email,
     nuevaPassword: req.body.password,
-  };  
+  };
 
   try {
 
@@ -868,8 +828,7 @@ const changePass = async (req, res) => {
       layout: "./layouts/layout-adminPanel",
       userAdmin
     });
-
-  }
+  };
 
 };
 

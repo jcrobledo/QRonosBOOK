@@ -378,6 +378,16 @@ li:hover a {
     flex-direction: column;
 }
 
+.fila-mixta-buscar {
+    display: flex;
+    gap: 5px;
+    align-items: flex-end; 
+}
+
+.fila-mixta-buscar button {  
+    margin-bottom: 20px;     
+}
+
 .fila-mixta {
     display: flex;
     gap: 15px; 
@@ -938,9 +948,11 @@ button.btFichaje:hover {
     font-size: 5rem;
 }
 
+/*
 .fade-in {
     animation: fadeIn 0.4s ease-out forwards;
 }
+*/
 
 .cajasAdminTrabFilter {
     background-color: white;
@@ -1005,7 +1017,7 @@ button.btFichaje:hover {
 .dropdown-table {
     display: none;
     position: absolute;
-    right: 70%;
+    right: 66%;
     top: 15%;
     left: auto;
     background-color: white;
@@ -1074,7 +1086,7 @@ button.btFichaje:hover {
 .tablaTrabajadores tbody tr:first-child:last-child .dropdown-table {
     width: max-content !important;
     min-width: auto !important;
-    right: 65% !important; 
+    right: 66% !important; 
     top: 50% !important;
     transform: translateY(-50%) !important;
     bottom: auto !important;
@@ -1087,7 +1099,7 @@ button.btFichaje:hover {
 .tablaTrabajadores tbody tr:first-child:nth-last-child(3) ~ tr .dropdown-table {
     width: max-content !important;
     min-width: auto !important;
-    right: 70% !important; /* Lo lanza a la izquierda del botón */
+    right: 66% !important; /* Lo lanza a la izquierda del botón */
     top: 50% !important;
     transform: translateY(-50%) !important;
     bottom: auto !important;
@@ -1125,6 +1137,10 @@ button.btFichaje:hover {
     background-color: #ff821c;
     border-radius: 50% !important;
     outline: none;
+}
+
+.tablaTrabajadores {
+    font-size: 16px;    
 }
 
 .tablaTrabajadores th {

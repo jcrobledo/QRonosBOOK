@@ -1,0 +1,133 @@
+<div class="cajasAdminTrabFilter fade-in" style="padding: 3px 20px;">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/adminPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            Gestión de Administradores
+        </h2>
+        <div class="spacer">  
+            <button type="button"
+                hx-get="/adminPanel/administradores/buscar" 
+                hx-target="#secContenido"
+                hx-push-url="true" 
+                class="btFichaje">
+                Nuevo Administrador
+            </button>          
+        </div>
+    </div>       
+</div>
+
+<div class="cajasAdminTrabTable fade-in">    
+    <table class="tablaTrabajadores">
+        <thead>
+            <tr>
+                <th hx-get="/adminPanel/administradores?sort=dni&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido"                    
+                    class="<%= currentSort === 'dni' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 150px;">
+                DNI</th>
+                <th hx-get="/adminPanel/administradores?sort=nombre&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido"                    
+                    class="<%= currentSort === 'nombre' ? 'sort-' + currentDir.toLowerCase() : '' %>"> 
+                Nombre</th>
+                <th hx-get="/adminPanel/administradores?sort=apellidos&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido"                    
+                    class="<%= currentSort === 'apellidos' ? 'sort-' + currentDir.toLowerCase() : '' %>">
+                Apellidos</th>
+                <th hx-get="/adminPanel/administradores?sort=createdAt&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido"                    
+                    class="<%= currentSort === 'createdAt' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 150px;">
+                Fecha Alta</th>                
+                <th class="no-sort" style="width: 110px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaAdministradoresBody">
+            <% administradores.forEach(function(administrador) { %>
+            <tr>
+                <td><%= administrador.dni %></td>
+                <td><%= administrador.nombre %></td> 
+                <td><%= administrador.apellidos %></td>  
+                <td><%= administrador.createdAt %></td>                  
+                <td class="celda-menu">
+                    <button class="btnAcciones">&middot;&middot;&middot;</button>
+                    <div class="dropdown-table">
+                        <ul>                            
+                            <li><a href="javascript:void(0)" onclick="eliminar('<%= administrador.dni %>')">
+                                Eliminar
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>                             
+            </tr>
+        <% }); %>                
+        </tbody>
+    </table>
+
+    <div class="info-paginacion">
+    
+        <div class="contador-resultados">
+            Mostrando <strong><%= desde %></strong> a <strong><%= hasta %></strong> de <strong><%= totalCount %></strong> trabajadores
+        </div>    
+        <div class="botones-paginacion">
+            <% if (currentPage > 1) { %>
+                <button hx-get="/adminPanel/administradores?page=<%= currentPage - 1 %>&sort=<%= currentSort %>&dir=<%= currentDir %>"                         
+                        hx-target="#secContenido"
+                        class="btn-pag">Anterior</button>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+                <button hx-get="/adminPanel/administradores?page=<%= currentPage + 1 %>&sort=<%= currentSort %>&dir=<%= currentDir %>"                          
+                        hx-target="#secContenido"
+                        class="btn-pag">Siguiente</button>
+            <% } %>
+        </div>
+    </div>
+
+    <div id="modalConfirmar" hx-swap-oob="true" class="modal-overlay" style="display:none;">
+        <div class="modal-content">        
+            <h3>¿Eliminar al Administrador <span id="dniModal"></span>?</h3>
+            <p>Esta acción es permanente y no se puede deshacer.</p>
+        
+            <div class="fila-botones"> 
+                <button type="button" onclick="document.getElementById('modalConfirmar').style.display='none'">
+                    Cancelar
+                </button>           
+                <button id="btnConfirmarEliminado"
+                    type="button" 
+                    hx-delete="" 
+                    hx-target="#secContenido"
+                    hx-push-url="false"
+                    hx-on::after-request="document.getElementById('modalConfirmar').style.display='none'">
+                Eliminar
+                </button>                
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+function eliminar(dni) {
+    const btn = document.getElementById('btnConfirmarEliminado');
+    const modal = document.getElementById('modalConfirmar');  
+    const spanDni = document.getElementById('dniModal');  
+
+    spanDni.textContent = dni;    
+    btn.setAttribute('hx-delete', `/adminPanel/administradores/eliminar/${dni}`);      
+    htmx.process(btn);    
+    
+    modal.style.display = 'flex';
+};
+
+</script>
+
+
+
+
