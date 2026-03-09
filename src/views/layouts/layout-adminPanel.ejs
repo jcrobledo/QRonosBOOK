@@ -17,11 +17,7 @@
           <%- body %>
         </div>
       </div>    
-    </main>  
-    <!-- <div id="loader-overlay" class="overlay_movil">  
-      <img src="/images/orange_circles.gif" alt="" class="loader-gif">
-      <p id="mensaje-loader">Cargando...</p>
-    </div>  --> 
+    </main>      
     <div id="modalConfirmar" style="display: none; position: absolute;"></div>
   </body>
 </html>
@@ -31,15 +27,5 @@
         if (event.persisted) {
             window.location.reload();
         }
-    }; 
-    
-    /*document.body.addEventListener('htmx:beforeRequest', function(evt) {
-        const loader = document.getElementById('loader-overlay');
-        if (loader) loader.style.display = 'flex';
-    });
-
-    document.body.addEventListener('htmx:afterRequest', function(evt) {
-        const loader = document.getElementById('loader-overlay');
-        if (loader) loader.style.display = 'none';
-    });*/
+    };         
 </script>
