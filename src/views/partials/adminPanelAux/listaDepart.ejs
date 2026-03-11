@@ -1,0 +1,139 @@
+<title><%= title %></title>
+<div class="cajasAdminTrabFilter fade-in" style="padding: 3px 20px;">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/adminPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            <span class="texto-largo">Gestión de </span>Departamentos
+        </h2>
+        <div class="spacer">  
+            <button type="button"
+                hx-get="/adminPanel/departamentos/alta" 
+                hx-target="#secContenido"
+                hx-push-url="true" 
+                class="btFichaje btn-dep">
+                Nuevo Departamento
+            </button>          
+        </div>
+    </div>       
+</div>
+
+<div class="cajasAdminTrabTable fade-in">    
+    <table class="tablaTrabajadores">
+        <thead>
+            <tr>
+                <th hx-get="/adminPanel/departamentos?sort=departamento&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido"                    
+                    class="<%= currentSort === 'departamento' ? 'sort-' + currentDir.toLowerCase() : '' %>">
+                Nombre Departamento</th>
+                <th hx-get="/adminPanel/departamentos?sort=num_trab&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido"                    
+                    class="<%= currentSort === 'num_trab' ? 'sort-' + currentDir.toLowerCase() : '' %>"> 
+                Nº Trabajadores</th>                              
+                <th class="no-sort" style="width: 110px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaDepartamentosBody">
+            <% departamentos.forEach(function(departamento) { %>
+            <tr>
+                <td><%= departamento.departamento %></td>
+                <td><%= departamento.num_trab %></td>                                  
+                <td class="celda-menu">
+                    <button class="btnAcciones">&middot;&middot;&middot;</button>
+                    <div class="dropdown-table">
+                        <ul>                            
+                            <li><a href="/adminPanel/departamentos/editar/<%= departamento.id %>"
+                                    hx-get="/adminPanel/departamentos/editar/<%= departamento.id %>"
+                                    hx-target="#secContenido"
+                                    hx-push-url="true">
+                                    Modificar
+                                </a>
+                            </li> 
+                            <li><a href="javascript:void(0)" 
+                                    onclick="prepararEliminar('<%= departamento.id %>', '<%= departamento.departamento %>', '<%= departamento.num_trab %>')">
+                                    Eliminar
+                                </a>
+                            </li>   
+                        </ul>
+                    </div>
+                </td>                             
+            </tr>
+        <% }); %>                
+        </tbody>
+    </table>
+
+    <div class="info-paginacion">
+    
+        <div class="contador-resultados">
+            Mostrando <strong><%= desde %></strong> a <strong><%= hasta %></strong> de <strong><%= totalCount %></strong> departamentos
+        </div>    
+        <div class="botones-paginacion">
+            <% if (currentPage > 1) { %>
+                <button hx-get="/adminPanel/departamentos?page=<%= currentPage - 1 %>&sort=<%= currentSort %>&dir=<%= currentDir %>"                         
+                        hx-target="#secContenido"
+                        class="btn-pag">Anterior</button>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+                <button hx-get="/adminPanel/departamentos?page=<%= currentPage + 1 %>&sort=<%= currentSort %>&dir=<%= currentDir %>"                          
+                        hx-target="#secContenido"
+                        class="btn-pag">Siguiente</button>
+            <% } %>
+        </div>
+    </div> 
+    
+    <div id="modalConfirmar" hx-swap-oob="true" class="modal-overlay" style="display:none;">
+    <div class="modal-content">        
+        <h3 id="tituloModal"></h3>
+        <p id="mensajeModal"></p> 
+
+        <div class="fila-botones"> 
+            <button id="btnCerrarModal" type="button" onclick="document.getElementById('modalConfirmar').style.display='none'">
+                Cancelar
+            </button>         
+            <button id="btnConfirmarEliminado"
+                type="button" 
+                hx-delete="" 
+                hx-target="#secContenido"
+                hx-on::after-request="document.getElementById('modalConfirmar').style.display='none'">
+                Eliminar
+            </button>                
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+
+    function prepararEliminar(id, nombre, numTrab) {
+        const modal = document.getElementById('modalConfirmar');
+        const btnEliminar = document.getElementById('btnConfirmarEliminado');
+        const btnCerrar = document.getElementById('btnCerrarModal');
+        const titulo = document.getElementById('tituloModal');
+        const mensaje = document.getElementById('mensajeModal');
+
+        if (numTrab > 0) {        
+            titulo.textContent = "ACCIÓN NO PERMITIDA";            
+            mensaje.innerHTML = `El departamento <b>${nombre}</b> tiene <b>${numTrab}</b> trabajadores asignados.<br><br>Deben ser reubicados antes de borrar el departamento.`;        
+            btnCerrar.innerText = "Entendido";
+            btnEliminar.style.display = 'none'; 
+        } else {        
+            titulo.innerHTML = `¿Eliminar Departamento<br><b>${nombre}</b>?`;            
+            mensaje.textContent = "Esta acción es permanente y no se puede deshacer.";        
+            btnCerrar.innerText = "Cancelar";
+            btnEliminar.style.display = 'inline-block'; 
+            btnEliminar.setAttribute('hx-delete', `/adminPanel/departamentos/eliminar/${id}`);          
+            htmx.process(btnEliminar);
+        }
+
+        modal.style.display = 'flex';
+    };
+
+</script>

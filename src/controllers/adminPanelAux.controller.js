@@ -1,5 +1,4 @@
 const model = require("../models/user");
-const { validationResult } = require('express-validator');
 
 /********************************************************************************************/
 
@@ -37,6 +36,7 @@ const listAdministradores = async (req, res) => {
 
         if (isHTMX) {
             return res.render("partials/adminPanelAux/listaAdmin", {
+                title: "Gestión de Administradores",
                 layout: false,
                 userAdmin,
                 administradores: adminsFormateados,
@@ -132,6 +132,7 @@ const buscarAdministradores = async (req, res) => {
 
     if (isHTMX) {
         return res.render('partials/adminPanelAux/buscarAdmin', {
+            title: "Alta de Administradores",
             layout: false,
             administrador,
             mensajeError,
@@ -161,7 +162,7 @@ const createAdministradores = async (req, res) => {
         dni: req.body.dni,
         nombre: req.body.nombre,
         apellidos: req.body.apellidos,
-        email: req.body.apellidos
+        email: req.body.email
     };
 
     try {
@@ -246,9 +247,315 @@ const deleteAdministradores = async (req, res) => {
 
 /********************************************************************************************/
 
+const listDepartamentos = async (req, res) => {
+
+    const userAdmin = req.user.nombre + " " + req.user.apellidos;
+    const isHTMX = req.headers['hx-request'];
+
+    const { sort, dir, page } = req.query;
+
+    const currentSort = sort || 'nombre';
+    const currentDir = dir || 'ASC';
+    const currentPage = parseInt(page) || 1;
+    const limit = 8;
+
+    try {
+        const { departamentos, totalCount } = await model.findAllDepTrabCount({
+            sort: currentSort,
+            dir: currentDir,
+            limit: limit,
+            offset: (currentPage - 1) * limit
+        });
+
+        const desde = totalCount === 0 ? 0 : (currentPage - 1) * limit + 1;
+        const hasta = Math.min(currentPage * limit, totalCount);
+
+        if (isHTMX) {
+            return res.render("partials/adminPanelAux/listaDepart", {
+                title: "Gestión de Departamentos",
+                layout: false,                
+                userAdmin,
+                departamentos,
+                currentSort,
+                currentDir,
+                currentPage,
+                desde,
+                hasta,
+                totalPages: Math.ceil(totalCount / limit),
+                totalCount
+            });
+        }
+
+        return res.render("partials/adminPanelAux/listaDepart", {
+            title: "Gestión de Departamentos",
+            layout: "./layouts/layout-adminPanel",            
+            userAdmin,
+            departamentos,
+            currentSort,
+            currentDir,
+            currentPage,
+            desde,
+            hasta,
+            totalPages: Math.ceil(totalCount / limit),
+            totalCount
+        });
+
+    } catch (error) {
+        console.error("Error general de acceso a BBDD:", error);
+        if (isHTMX) {
+            res.setHeader('HX-Retarget', '#secContenido');
+            return res.render('adminPanel/errorGeneral', {
+                title: "Error General",
+                layout: false,
+                userAdmin
+            });
+        }
+        return res.render("adminPanel/errorGeneral", {
+            title: "Error General",
+            layout: "./layouts/layout-adminPanel",
+            userAdmin
+        });
+    };
+
+};
+
+/********************************************************************************************/
+
+const altaDepartamentos = (req, res) => {
+
+    const userAdmin = req.user.nombre + " " + req.user.apellidos;
+    const isHTMX = req.headers['hx-request'];
+
+    if (isHTMX) {
+        return res.render("partials/adminPanelAux/altaDepartamentos", {
+            title: "Alta de Departamentos",
+            layout: false,
+            userAdmin
+        });
+    }
+
+    return res.render("partials/adminPanelAux/altaDepartamentos", {
+        title: "Alta de Departamentos",
+        layout: "./layouts/layout-adminPanel",
+        userAdmin
+    });
+
+};
+
+/********************************************************************************************/
+
+const createDepart = async (req, res) => {
+
+    const userAdmin = req.user.nombre + " " + req.user.apellidos;
+    const isHTMX = req.headers['hx-request'];
+    const nombreDep = req.body.nombre;
+
+    try {
+
+        let mensajeOK = null;
+        let mensajeKO = null;
+        const depExiste = await model.findDepByName(nombreDep);
+
+        if (depExiste.length > 0) {
+            mensajeKO = "Departamento NO CREADO. Ya hay uno con ese nombre"
+        } else {
+            mensajeOK = "Departamento dado de Alta CORRECTAMENTE"
+            departamento = await model.createDep(nombreDep);
+        };
+
+        if (isHTMX) {
+            return res.render('partials/adminPanelAux/confirmAltaDep', {
+                title: "Alta de Departamentos",
+                layout: false,
+                nombreDep,
+                mensajeOK,
+                mensajeKO,
+                userAdmin
+            });
+        }
+        return res.render("partials/adminPanelAux/confirmAltaDep", {
+            title: "Alta de Departamentos",
+            layout: "./layouts/layout-adminPanel",
+            nombreDep,
+            mensajeOK,
+            mensajeKO,
+            userAdmin
+        });
+
+    } catch (error) {
+        console.error("Error general de acceso a BBDD:", error);
+        if (isHTMX) {
+            res.setHeader('HX-Retarget', '#secContenido');
+            return res.render('adminPanel/errorGeneral', {
+                title: "Error General",
+                layout: false,
+                userAdmin
+            });
+        }
+        return res.render("adminPanel/errorGeneral", {
+            title: "Error General",
+            layout: "./layouts/layout-adminPanel",
+            userAdmin
+        });
+
+    };
+};
+
+/********************************************************************************************/
+
+const editarDepartamentos = async (req, res) => {
+
+    const userAdmin = req.user.nombre + " " + req.user.apellidos;
+    const isHTMX = req.headers['hx-request'];
+    const idDepartamento = req.params.id;
+
+    try {
+
+        const departamentoArray = await model.findDepById(idDepartamento);
+        const departamento = departamentoArray[0];
+
+        if (isHTMX) {
+            return res.render('partials/adminPanelAux/editarDepartamentos', {
+                title: "Editar Departamento",
+                layout: false,
+                departamento,
+                userAdmin
+            });
+        };
+
+        return res.render("partials/adminPanelAux/editarDepartamentos", {
+            title: "Editar Departamento",
+            layout: "./layouts/layout-adminPanel",
+            departamento,
+            userAdmin
+        });
+
+    } catch (error) {
+        console.error("Error general de acceso a BBDD:", error);
+        if (isHTMX) {
+            res.setHeader('HX-Retarget', '#secContenido');
+            return res.render('adminPanel/errorGeneral', {
+                title: "Error General",
+                layout: false,
+                userAdmin
+            });
+        };
+
+        return res.render("adminPanel/errorGeneral", {
+            title: "Error General",
+            layout: "./layouts/layout-adminPanel",
+            userAdmin
+        });
+    };
+};
+
+/********************************************************************************************/
+
+const updateDepart = async (req, res) => {
+
+    const userAdmin = req.user.nombre + " " + req.user.apellidos;
+    const isHTMX = req.headers['hx-request'];
+    const idDepartamento = req.params.id;
+    const nombreDep = req.body.nombre;
+
+    try {
+
+        let mensajeOK = null;
+        let mensajeKO = null;
+        const depExiste = await model.findDepByName(nombreDep);
+
+        if (depExiste.length > 0) {
+            mensajeKO = "Departamento NO MODIFICADO. Ya hay uno con ese nombre"
+        } else {
+            mensajeOK = "Departamento Modificado CORRECTAMENTE"
+            const result = await model.updateDep(idDepartamento, nombreDep);
+        };
+
+        if (isHTMX) {
+            return res.render('partials/adminPanelAux/confirmEditDep', {
+                title: "Editar Departamento",
+                layout: false,
+                nombreDep,
+                mensajeOK,
+                mensajeKO,
+                userAdmin
+            });
+        }
+        return res.render("partials/adminPanelAux/confirmEditDep", {
+            title: "Editar Departamento",
+            layout: "./layouts/layout-adminPanel",
+            nombreDep,
+            mensajeOK,
+            mensajeKO,
+            userAdmin
+        });
+
+    } catch (error) {
+        console.error("Error general de acceso a BBDD:", error);
+        if (isHTMX) {
+            res.setHeader('HX-Retarget', '#secContenido');
+            return res.render('adminPanel/errorGeneral', {
+                title: "Error General",
+                layout: false,
+                userAdmin
+            });
+        };
+
+        return res.render("adminPanel/errorGeneral", {
+            title: "Error General",
+            layout: "./layouts/layout-adminPanel",
+            userAdmin
+        });
+    };
+};
+
+/********************************************************************************************/
+
+const deleteDepart = async (req, res) => {
+
+    const userAdmin = req.user.nombre + " " + req.user.apellidos;
+    const isHTMX = req.headers['hx-request'];
+    const id = req.params.id;
+
+    try {
+
+        const result = await model.deleteDepart(id);
+
+        if (isHTMX) {
+            return res.set('HX-Redirect', '/adminPanel/departamentos').send();
+        }
+        return res.redirect('/adminPanel/departamentos');
+
+    } catch (error) {
+        console.error("Error general de acceso a BBDD:", error);
+        if (isHTMX) {
+            res.setHeader('HX-Retarget', '#secContenido');
+            return res.render('adminPanel/errorGeneral', {
+                title: "Error General",
+                layout: false,
+                userAdmin
+            });
+        }
+        return res.render("adminPanel/errorGeneral", {
+            title: "Error General",
+            layout: "./layouts/layout-adminPanel",
+            userAdmin
+        });
+    };
+
+};
+
+/********************************************************************************************/
+
 module.exports = {
     listAdministradores,
     buscarAdministradores,
     createAdministradores,
-    deleteAdministradores
+    deleteAdministradores,
+    listDepartamentos,
+    altaDepartamentos,
+    createDepart,
+    editarDepartamentos,
+    updateDepart,    
+    deleteDepart
 };

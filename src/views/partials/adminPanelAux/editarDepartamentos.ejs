@@ -1,0 +1,42 @@
+<title><%= title %></title>
+<div class="cajasAdminTrabFilter fade-in">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/adminPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            Modificación de Departamentos
+        </h2>
+        <div class="spacer">            
+        </div>
+    </div>     
+
+    <form class="formularioAlta"        
+        hx-put="/adminPanel/departamentos/editar/<%= departamento.id %>" 
+        hx-target="#secContenido" 
+        hx-push-url="false">        
+
+        <div class="form-group-crud" style="margin-bottom: 20px;">
+            <input class="form-control input-nombre-dep" type="text" id="nombre" name="nombre" maxlength="50" 
+                pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ \-]{1,50}" autocomplete="off" placeholder=" " required 
+                title="Solo letras, máximo 50 caracteres"
+                value="<%= departamento.nombre %>">
+            <label class="control-label" for="nombre">Nombre Departamento</label>
+        </div>       
+
+        <div class="fila-botones">
+            <button type="button" 
+                hx-get="/adminPanel/departamentos" 
+                hx-target="#secContenido"
+                hx-push-url="true">
+                Volver
+            </button>
+            <button type="submit">Editar</button>            
+        </div>
+    </form>    
+</div>

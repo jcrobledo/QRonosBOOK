@@ -3,7 +3,7 @@ const router = express.Router();
 const controller = require('../controllers/adminPanel.controller');
 const controllerAux = require('../controllers/adminPanelAux.controller');
 const vToken = require('../middlewares/verify-token');
-const { rulesAuth, rulesAlta, rulesPass, rulesDNI, rulesAdmin, validate } = require('../middlewares/validatorExpress');
+const { rulesAuth, rulesAlta, rulesPass, rulesDNI, rulesAdmin, rulesDep, validate } = require('../middlewares/validatorExpress');
 
 /* Rutas para Acceso al Panel de Adminitración: Login y Logout */
 router.post("/", rulesAuth, controller.auth);
@@ -27,5 +27,13 @@ router.get("/administradores/buscar", vToken.verifyTokenAdmin, controllerAux.bus
 router.post("/administradores/buscar", vToken.verifyTokenAdmin, rulesDNI, validate, controllerAux.buscarAdministradores);
 router.post("/administradores/alta", vToken.verifyTokenAdmin, rulesAdmin, validate, controllerAux.createAdministradores);
 router.delete("/administradores/eliminar/:dni", vToken.verifyTokenAdmin, controllerAux.deleteAdministradores);
+
+/* Rutas para la Gestión de Departamentos */
+router.get("/departamentos", vToken.verifyTokenAdmin, controllerAux.listDepartamentos);
+router.get("/departamentos/alta", vToken.verifyTokenAdmin, controllerAux.altaDepartamentos);
+router.post("/departamentos/alta", vToken.verifyTokenAdmin, rulesDep, validate, controllerAux.createDepart);
+router.get("/departamentos/editar/:id", vToken.verifyTokenAdmin, controllerAux.editarDepartamentos);
+router.put("/departamentos/editar/:id", vToken.verifyTokenAdmin, rulesDep, validate, controllerAux.updateDepart);
+router.delete("/departamentos/eliminar/:id", vToken.verifyTokenAdmin, controllerAux.deleteDepart);
 
 module.exports = router;  //para poder exportar la ruta a otros códigos

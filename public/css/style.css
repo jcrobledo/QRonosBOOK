@@ -574,6 +574,10 @@ button.btFichaje:hover {
     width: 250px;
 }
 
+.input-nombre-dep {
+    width: 400px;
+}
+
 .input-password {
     width: 250px;
 }
@@ -1328,6 +1332,10 @@ button.btFichaje:hover {
         width: 100%;
     }
 
+    .input-nombre-dep {
+        width: 100%;
+    }
+
     .input-password {
         width: 100%;
     }
@@ -1385,6 +1393,18 @@ button.btFichaje:hover {
         font-size: 18px;
     }
 
+    .spacer>.btFichaje.btn-admin::after {
+        content: "Nuevo Admin";
+    }
+
+    .spacer>.btFichaje.btn-dep::after {
+        content: "Nuevo Dep";
+    }
+
+    .fila-mixta-buscar .form-group-crud {
+        flex-grow: 1; 
+    }
+
 }
 
 /********************************************************************************************/
@@ -1400,6 +1420,14 @@ button.btFichaje:hover {
     .spacer>button.btFichaje::after {
         content: "Nuevo Trab";
         font-size: 18px;
+    }
+
+    .spacer>.btFichaje.btn-admin::after {
+        content: "Nuevo Admin";
+    }
+
+    .spacer>.btFichaje.btn-dep::after {
+        content: "Nuevo Dep";
     }
 
 }

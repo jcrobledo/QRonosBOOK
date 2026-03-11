@@ -1,3 +1,4 @@
+<title><%= title %></title>
 <div class="cajasAdminTrabFilter fade-in">
     <div id="contenedorCabecera" class="contenedorCabecera">
         <div class="secMenu">
@@ -40,28 +41,27 @@
                 <label class="control-label" for="dni">DNI</label>
             </div>
 
-            <button type="submit" 
-                class="btn-buscar" 
-                <% if (typeof mensajeOK !== 'undefined' && mensajeOK === 'OK') { %> 
-                disabled style="display:none;" <% } %>>
-                Buscar
-            </button>                 
+            <% if (typeof mensajeOK === 'undefined' || mensajeOK !== 'OK') { %>
+                <button type="submit" class="btn-buscar">
+                    Buscar
+                </button>
+            <% } %>              
         </div>
 
         <div class="form-group-crud">
-                <input class="form-control readonly-style" type="text" id="nombre" name="nombre" placeholder=" " readonly
+                <input class="form-control readonly-style input-nombre-dep" type="text" id="nombre" name="nombre" placeholder=" " readonly
                 value="<%= administrador ? administrador.nombre : '' %>">
                 <label class="control-label" for="nombre">Nombre</label>
         </div>
 
         <div class="form-group-crud">
-            <input class="form-control readonly-style" type="text" id="apellidos" name="apellidos" placeholder=" " readonly
+            <input class="form-control readonly-style input-nombre-dep" type="text" id="apellidos" name="apellidos" placeholder=" " readonly
             value="<%= administrador ? administrador.apellidos : '' %>">
             <label class="control-label" for="apellidos">Apellidos</label>
         </div>
 
         <div class="form-group-crud">
-            <input class="form-control readonly-style" style="margin-bottom: 15px;" type="email" id="email" name="email" 
+            <input class="form-control readonly-style input-nombre-dep" style="margin-bottom: 15px;" type="email" id="email" name="email" 
             autocomplete="off" placeholder=" " readonly 
             value="<%= administrador ? administrador.email : '' %>">
             <label class="control-label" for="email">Email</label>

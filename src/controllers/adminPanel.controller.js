@@ -92,6 +92,7 @@ const adminPage = (req, res) => {
 
   if (isHTMX) {
     return res.render("partials/adminPanel/menu_inicio", {
+      title: "Panel de Administración",
       layout: false,
       userAdmin
     });
@@ -144,6 +145,7 @@ const listTrabajadores = async (req, res) => {
 
     if (isHTMX) {
       return res.render("partials/adminPanel/listaTrabajadores", {
+        title: "Gestión de Trabajadores",
         layout: false,
         userAdmin,
         trabajadores,
@@ -212,6 +214,7 @@ const altaTrabajadores = async (req, res) => {
 
     if (isHTMX) {
       return res.render("partials/adminPanel/altaTrabajadores", {
+        title: "Alta de Trabajadores",
         layout: false,
         userAdmin,
         departamentoMap

@@ -1,3 +1,4 @@
+<title><%= title %></title>
 <div class="cajasAdminTrabFilter fade-in" style="padding: 3px 20px;">
     <div id="contenedorCabecera" class="contenedorCabecera">
         <div class="secMenu">
@@ -9,14 +10,14 @@
                 class="iconoScale">            
         </div>
         <h2 class="correcto tituloCabecera">
-            Gestión de Administradores
+            <span class="texto-largo">Gestión de </span>Administradores
         </h2>
         <div class="spacer">  
             <button type="button"
                 hx-get="/adminPanel/administradores/buscar" 
                 hx-target="#secContenido"
                 hx-push-url="true" 
-                class="btFichaje">
+                class="btFichaje btn-admin">
                 Nuevo Administrador
             </button>          
         </div>
@@ -72,7 +73,7 @@
     <div class="info-paginacion">
     
         <div class="contador-resultados">
-            Mostrando <strong><%= desde %></strong> a <strong><%= hasta %></strong> de <strong><%= totalCount %></strong> trabajadores
+            Mostrando <strong><%= desde %></strong> a <strong><%= hasta %></strong> de <strong><%= totalCount %></strong> administradores
         </div>    
         <div class="botones-paginacion">
             <% if (currentPage > 1) { %>

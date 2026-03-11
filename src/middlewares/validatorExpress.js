@@ -91,6 +91,15 @@ const rulesAdmin = [
         .isLength({ max: 50 })
 ];
 
+const rulesDep = [
+    body('nombre')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ max: 50 })
+        .isAlpha('es-ES', { ignore: ' -' })
+];
+
 /********************************************************************************************/
 
 const validate = (req, res, next) => {
@@ -131,5 +140,6 @@ module.exports = {
     rulesPass,
     rulesDNI,
     rulesAdmin, 
+    rulesDep,
     validate
 };

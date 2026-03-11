@@ -84,6 +84,11 @@
     <h3 class="error" id="mgsFichCertKO">El usuario NO está dado de alta en el sistema</h3>
 </div>
 
+<script>    
+    const nuevaURL = "/codigosQR/urlTemporal/<%= sufijoURL %>";
+    window.history.replaceState({}, '', nuevaURL);
+</script>
+
 <script src="/socket.io/socket.io.js"></script>
 
 <script>

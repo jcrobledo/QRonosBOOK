@@ -49,7 +49,7 @@ const findAllAdmin = async ({ sort, dir, limit, offset }) => {
     } catch (error) {
         console.error("Error al obtener administradores:", error);
         throw error;
-    }      
+    };   
 };
 
 /********************************************************************************************/
@@ -152,6 +152,18 @@ const findDepById = async (id) => {
 
 /********************************************************************************************/
 
+const findDepByName = async (nombre) => {
+    const sql = 'SELECT * FROM departamentos WHERE nombre = ?';
+    try {
+        const [rows] = await pool.execute(sql, [nombre]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 const createTrab = async (trabajador) => {
     const sql = `
         INSERT INTO trabajadores (dni, nombre, apellidos, email, departamento, password)
@@ -183,6 +195,22 @@ const createAdmin = async (dni) => {
 
     try {
         const [rows] = await pool.execute(sql, [dni]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
+const createDep = async (nombre) => {
+    const sql = `
+        INSERT INTO departamentos (nombre)
+        VALUES (?)
+    `;
+
+    try {
+        const [rows] = await pool.execute(sql, [nombre]);
         return rows;
     } catch (error) {
         throw error;
@@ -236,6 +264,20 @@ const updateTrab = async (trabajador) => {
 
 /********************************************************************************************/
 
+const updateDep = async (id, nombre) => {      
+
+    sql = 'UPDATE departamentos SET nombre = ? WHERE id = ?';   
+
+    try {
+        const [rows] = await pool.execute(sql, [nombre, id]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 const deleteTrab = async (dni) => {
 
     const sql = 'DELETE FROM trabajadores WHERE dni = ?';
@@ -264,6 +306,20 @@ const deleteAdmin = async (dni) => {
 
 /********************************************************************************************/
 
+const deleteDepart = async (id) => {
+ 
+    const sql = 'DELETE FROM departamentos WHERE id = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [id]);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+};
+
+/********************************************************************************************/
+
 const updatePassTrab = async (dni, password) => {
 
     const sql = 'UPDATE trabajadores SET password = ? WHERE dni = ?';
@@ -278,6 +334,67 @@ const updatePassTrab = async (dni, password) => {
 
 /********************************************************************************************/
 
+const findAllDepTrabCount = async ({ sort, dir, limit, offset }) => {
+    
+    const queryBase = `
+        FROM departamentos d
+        LEFT JOIN trabajadores t ON d.id = t.departamento
+        GROUP BY d.id, d.nombre`;
+    
+    const sortMapping = {
+        'nombre': 'd.nombre',
+        'num_trab': 'num_trab'
+    };
+
+    const orderBy = sortMapping[sort] || 'd.nombre';
+    const orderDir = (dir && dir.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';
+    
+    const selectQuery = `
+        SELECT d.id, d.nombre AS departamento, COUNT(t.dni) AS num_trab
+        ${queryBase} 
+        ORDER BY ${orderBy} ${orderDir} 
+        LIMIT ? OFFSET ?`;        
+    
+    const countQuery = `SELECT COUNT(DISTINCT d.id) as total FROM departamentos d`;
+
+    try {
+        const [rows] = await pool.execute(selectQuery, [String(limit), String(offset)]);
+        const [[{ total }]] = await pool.execute(countQuery);
+
+        return { 
+            departamentos: rows, 
+            totalCount: total 
+        };
+    } catch (error) {        
+        throw error;
+    };     
+};
+
+/********************************************************************************************/
+
+const countTrabDepById  = async (id) => {
+
+    const sql = `
+        SELECT 
+            d.id, 
+            d.nombre AS departamento, 
+            COUNT(t.dni) AS num_trab
+        FROM departamentos d
+        LEFT JOIN trabajadores t ON d.id = t.departamento
+        WHERE d.id = ?
+        GROUP BY d.id, d.nombre`;
+
+    try {        
+        const [rows] = await pool.execute(sql, [id]);        
+        return rows;
+
+    } catch (error) {        
+        throw error;
+    };  
+};
+
+/********************************************************************************************/
+
 module.exports = {      
     findByDniAdmin,
     findAllAdmin,
@@ -285,10 +402,16 @@ module.exports = {
     findAllTrab,
     findAllDep,
     findDepById,    
+    findDepByName,
     createTrab,
     createAdmin,
+    createDep,
     updateTrab,
+    updateDep,
     deleteTrab,
     deleteAdmin,
-    updatePassTrab
+    deleteDepart,
+    updatePassTrab,
+    findAllDepTrabCount,
+    countTrabDepById
 };
