@@ -566,6 +566,10 @@ button.btFichaje:hover {
     pointer-events: none;                 
 }
 
+.input-id {
+    width: 140px;
+}
+
 .input-dni {
     width: 120px;
 }
@@ -1233,6 +1237,80 @@ button.btFichaje:hover {
     font-size: 0.95rem;
 }
 
+.navegacion-fecha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;    
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+}
+
+.info-fecha-texto {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #D13815;
+}
+
+.triangulo-nav {
+    color: #ff821c;
+    font-size: 18px; 
+    cursor: pointer;
+    user-select: none; /* Evita que se seleccione el texto al hacer click rápido */
+}    
+
+.triangulo-nav:hover {
+    color: #D13815;
+    transform: scale(1.2); 
+}
+
+.triangulo-nav.triangulo-disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.input-calendario-nav {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 5px 10px;    
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #D13815;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    outline: none;    
+    user-select: none; /* evita seleccionar texto */
+    -webkit-user-select: none;
+    caret-color: transparent;    /* Oculta la rayita de escribir */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.input-calendario-nav:hover,
+.input-calendario-nav:focus {
+    border-color: #D13815;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.incidencia-disabled {
+    color: #ccc; 
+    cursor: not-allowed; 
+    padding: 5px 12px; 
+    display: block; 
+    pointer-events: none
+}
+
+.fila-con-incidencia {
+    color: #D13815; 
+    font-weight: 500;
+}
+
 /********************************************************************************************/
 
 @media screen and (max-width: 768px) {
@@ -1321,6 +1399,10 @@ button.btFichaje:hover {
     }
 
     .form-group-filtro {
+        width: 100%;
+    }
+
+    .input-id {
         width: 100%;
     }
 

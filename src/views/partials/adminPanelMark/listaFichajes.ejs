@@ -1,0 +1,245 @@
+<title><%= title %></title>
+<div class="cajasAdminTrabFilter fade-in">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/adminPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            <span class="texto-largo">Gestión de </span>Fichajes
+        </h2>    
+        <div class="spacer">            
+        </div>    
+    </div>
+
+    <div class="formularioFiltroBtn">            
+        <button id="botonFiltros" onclick="mostrarFormulario()" style="width: 200px;">Ocultar Filtros</button>
+    </div>
+
+    <form class="formularioFiltro"
+        hx-get="/adminPanel/fichajes" 
+        hx-target="#secContenido" 
+        hx-push-url="true">
+
+        <input type="hidden" name="fecha" value="<%= filtros.fecha %>">
+
+        <div class="form-group-filtro">
+            <input class="form-control input-id" type="text" id="id" name="id" maxlength="12" pattern="\[0-9]{1,12}"
+                autocomplete="off" placeholder=" "
+                title="De 1 a 12 números"
+                value="<%= filtros.id %>">
+            <label class="control-label" for="id">ID</label>
+        </div>
+
+        <div class="form-group-filtro">
+            <input class="form-control input-dni" type="text" id="dniFiltro" name="dni" maxlength="9" pattern="([0-9]{1,8}[a-zA-Z]?)|([a-zA-Z]{1})"
+                autocomplete="off" placeholder=" "
+                title="De 1 a 8 números o una letra y debe ir al final (sin ñ/Ñ)"
+                value="<%= filtros.dni %>">
+            <label class="control-label" for="dniFiltro">DNI</label>
+        </div>
+
+        <div class="form-group-filtro">
+            <input class="form-control input-nombre" type="text" id="nombre" name="nombre" maxlength="25" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ \-]{1,25}"
+                autocomplete="off" placeholder=" " title="Solo letras, máximo 25 caracteres"
+                value="<%= filtros.nombre %>">
+            <label class="control-label" for="nombre">Nombre</label>
+        </div>
+
+        <div class="form-group-filtro">
+            <input class="form-control input-apellidos" type="text" id="apellidos" name="apellidos" maxlength="50"
+                pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ \-]{1,50}" autocomplete="off" placeholder=" " title="Solo letras, máximo 50 caracteres"
+                value="<%= filtros.apellidos %>">
+            <label class="control-label" for="apellidos">Apellidos</label>
+        </div>    
+        
+        <div class="form-group-filtro">
+            <input class="form-control input-dni" type="text" id="incidencia" name="incidencia" maxlength="5" pattern="\[0-9]{1,5}"
+                autocomplete="off" placeholder=" "
+                title="De 1 a 5 números"
+                value="<%= filtros.incidencia %>">
+            <label class="control-label" for="incidencia">Incidencia</label>
+        </div>
+
+        <div class="fila-botones">
+            <button type="submit">Filtrar</button>
+            <button type="button" 
+                hx-get="/adminPanel/fichajes?fecha=<%= filtros.fecha %>" 
+                hx-target="#secContenido"
+                hx-push-url="true">
+                Limpiar
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<div class="cajasAdminTrabTable fade-in">  
+
+    <div class="navegacion-fecha">    
+    
+        <span hx-get="/adminPanel/fichajes?fecha=<%= diaAnterior %>&sort=<%= currentSort %>&dir=<%= currentDir %>" 
+          hx-target="#secContenido" 
+          hx-include=".formularioFiltro"
+          hx-push-url="true"
+          class="triangulo-nav">
+            &#9664;
+        </span>
+
+        <div class="info-fecha-texto">                     
+            <input type="date" 
+               name="fecha" 
+               value="<%= filtros.fecha %>"
+               max="<%= hoy %>"
+               required 
+               hx-get="/adminPanel/fichajes" 
+               onclick="this.showPicker()"
+               onkeydown="return false;"
+               hx-target="#secContenido" 
+               hx-include=".formularioFiltro"
+               hx-trigger="change"
+               hx-push-url="true"
+               class="input-calendario-nav">
+        </div>
+    
+        <% if (esHoy) { %>
+            <span class="triangulo-nav triangulo-disabled">
+                &#9654;
+            </span>
+        <% } else { %>
+            <span hx-get="/adminPanel/fichajes?fecha=<%= diaSiguiente %>&sort=<%= currentSort %>&dir=<%= currentDir %>" 
+              hx-target="#secContenido" 
+              hx-include=".formularioFiltro"
+              hx-push-url="true"
+              class="triangulo-nav">
+                &#9654;
+            </span>
+        <% } %>
+
+    </div>
+ 
+    <table class="tablaTrabajadores">
+        <thead>
+            <tr>
+                <th hx-get="/adminPanel/fichajes?sort=id&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'id' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 120px;">
+                ID</th>
+                <th hx-get="/adminPanel/fichajes?sort=dni&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'dni' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 110px;"> 
+                DNI</th>
+                <th hx-get="/adminPanel/fichajes?sort=nombre&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'nombre' ? 'sort-' + currentDir.toLowerCase() : '' %>">
+                Nombre</th>
+                <th hx-get="/adminPanel/fichajes?sort=apellidos&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'apellidos' ? 'sort-' + currentDir.toLowerCase() : '' %>">
+                Apellidos</th>
+                <th hx-get="/adminPanel/fichajes?sort=date&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'date' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 110px;">
+                Dia</th>
+                <th hx-get="/adminPanel/fichajes?sort=time&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'time' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 90px;">
+                Hora</th>
+                <th hx-get="/adminPanel/fichajes?sort=incidencia&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'incidencia' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 100px;">
+                Incidencia</th>
+                <th class="no-sort" style="width: 110px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaTrabajadoresBody">
+            <% fichajes.forEach(function(fichaje) { %>
+            <tr class="<%= fichaje.incidencia ? 'fila-con-incidencia' : '' %>">
+                <td><%= fichaje.id %></td>
+                <td><%= fichaje.dni %></td>
+                <td><%= fichaje.nombre %></td> 
+                <td><%= fichaje.apellidos %></td>  
+                <td><%= fichaje.date %></td>
+                <td><%= fichaje.time %></td>
+                <td><%= fichaje.incidencia %></td>               
+                <td class="celda-menu">
+                    <button class="btnAcciones">&middot;&middot;&middot;</button>
+                    <div class="dropdown-table">
+                        <ul>                            
+                            <li><a href="/adminPanel/fichajes/fichajes/<%= fichaje.dni %>"
+                                hx-get="/adminPanel/fichajes/fichajes/<%= fichaje.dni %>"
+                                hx-target="#secContenido"
+                                hx-push-url="true">
+                                Ver fichajes
+                                </a>
+                            </li>
+                            <li>
+                                <% if (fichaje.incidencia) { %>
+                                    <a href="/adminPanel/fichajes/incidencias/<%= fichaje.incidencia %>"
+                                    hx-get="/adminPanel/fichajes/incidencias/<%= fichaje.incidencia %>"
+                                    hx-target="#secContenido"
+                                    hx-push-url="true">
+                                        Ver Incidencia
+                                </a>
+                                <% } else { %>
+                                    <span class="incidencia-disabled">
+                                        Ver Incidencia
+                                    </span>
+    <%                          } %>
+                            </li>
+                        </ul>
+                    </div>
+                </td>                             
+            </tr>
+        <% }); %>                
+        </tbody>
+    </table>
+
+    <div class="info-paginacion">
+    
+        <div class="contador-resultados">
+            Mostrando <strong><%= desde %></strong> a <strong><%= hasta %></strong> de <strong><%= totalCount %></strong> fichajes
+        </div>    
+        <div class="botones-paginacion">
+            <% if (currentPage > 1) { %>
+                <button hx-get="/adminPanel/fichajes?page=<%= currentPage - 1 %>&sort=<%= currentSort %>&dir=<%= currentDir %>&fecha=<%= filtros.fecha %>" 
+                        hx-include=".formularioFiltro" 
+                        hx-target="#secContenido"
+                        class="btn-pag">Anterior</button>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+                <button hx-get="/adminPanel/fichajes?page=<%= currentPage + 1 %>&sort=<%= currentSort %>&dir=<%= currentDir %>&fecha=<%= filtros.fecha %>" 
+                        hx-include=".formularioFiltro" 
+                        hx-target="#secContenido"
+                        class="btn-pag">Siguiente</button>
+            <% } %>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function mostrarFormulario() {
+        const formulario = document.querySelector('.formularioFiltro');
+        formulario.classList.toggle('escondido');
+
+        if (formulario.classList.contains('escondido')) {
+            botonFiltros.innerText = "Ver Filtros";
+        } else {
+            botonFiltros.innerText = "Ocultar Filtros";
+        };
+    };
+</script>
+

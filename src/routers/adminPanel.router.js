@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const controller = require('../controllers/adminPanel.controller');
 const controllerAux = require('../controllers/adminPanelAux.controller');
+const controllerMark = require('../controllers/adminPanelMark.controller');
 const vToken = require('../middlewares/verify-token');
 const { rulesAuth, rulesAlta, rulesPass, rulesDNI, rulesAdmin, rulesDep, validate } = require('../middlewares/validatorExpress');
 
@@ -35,5 +36,8 @@ router.post("/departamentos/alta", vToken.verifyTokenAdmin, rulesDep, validate, 
 router.get("/departamentos/editar/:id", vToken.verifyTokenAdmin, controllerAux.editarDepartamentos);
 router.put("/departamentos/editar/:id", vToken.verifyTokenAdmin, rulesDep, validate, controllerAux.updateDepart);
 router.delete("/departamentos/eliminar/:id", vToken.verifyTokenAdmin, controllerAux.deleteDepart);
+
+/* Rutas para la Gestión de Fichajes e Incidencias */
+router.get("/fichajes", vToken.verifyTokenAdmin, controllerMark.listFichajes);
 
 module.exports = router;  //para poder exportar la ruta a otros códigos
