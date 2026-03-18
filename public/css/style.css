@@ -1241,7 +1241,7 @@ button.btFichaje:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 10px;
     margin-bottom: 20px;    
     padding: 12px;
     border-radius: 8px;
@@ -1309,6 +1309,158 @@ button.btFichaje:hover {
 .fila-con-incidencia {
     color: #D13815; 
     font-weight: 500;
+}
+
+.falta-fichaje {
+    color: #D13815; 
+    font-weight: 500;
+}
+
+/* --- ESTRUCTURA Y BORDES --- */
+
+.tablaTrabajadoresFichajes {
+    border-collapse: collapse; /* Une las celdas: elimina el 'aire' invisible entre ellas */
+    border-spacing: 0;        
+    width: 700px !important; 
+    min-width: 0 !important; 
+    max-width: 700px !important;
+    margin: 0 auto; 
+    table-layout: fixed; 
+    font-size: 16px;
+}
+
+.tablaTrabajadoresFichajes th {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;    
+    text-align: center;    
+}
+
+.tablaTrabajadoresFichajes th.no-sort {
+    cursor: default;
+}
+
+/* El triángulo ahora fluye con el texto */
+.tablaTrabajadoresFichajes th:not(.no-sort)::after {
+    content: '\25B2';
+    /* Triángulo arriba */
+    display: inline-block;
+    margin-left: 8px;
+    /* Espacio exacto entre el nombre y el icono */
+    font-size: 0.7rem;
+    vertical-align: middle;
+    opacity: 0;
+    /* Casi invisible cuando no está ordenado */
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+/* Hover: lo mostramos un poquito más */
+.tablaTrabajadoresFichajes th:not(.no-sort):hover::after {
+    opacity: 0.5;
+}
+
+/* Columna activa: Ascendente */
+.tablaTrabajadoresFichajes th.sort-asc::after {
+    content: '\25B2';
+    opacity: 1;
+    color: white;
+}
+
+/* Columna activa: Descendente */
+.tablaTrabajadoresFichajes th.sort-desc::after {
+    content: '\25BC';
+    /* Triángulo abajo */
+    opacity: 1;
+    color: white;
+}
+
+/* 1. Base: Quitamos bordes internos por defecto */
+.tablaTrabajadoresFichajes td {
+    padding: 8px;
+    border-bottom: none !important;
+    border-top: none !important;
+    background-clip: padding-box; /* fondo cubre toda la celda sin fisuras */
+}
+
+/* 2. Bloque del día (La celda con el rowspan) */
+.tablaTrabajadoresFichajes td[rowspan] {
+    border-bottom: 1px solid #ddd !important;         
+    vertical-align: middle;
+}
+
+/* 3. Divisoria: Solo al final de cada día y en la última fila de la tabla */
+.tablaTrabajadoresFichajes tr.fin-dia td,
+.tablaTrabajadoresFichajes tr:last-child td {
+    border-bottom: 1px solid #ddd !important;
+}
+
+/* --- EFECTOS DE SOMBREADO --- */
+
+/* 4. Sombreado de TODO el bloque del día al pasar el ratón */
+/* Aplicamos el color a las CELDAS cuando el TBODY tiene el hover */
+.tablaTrabajadoresFichajes tbody.bloque-dia:hover td {
+    background-color: #fff4e6 !important;     
+}
+
+/* Forzamos que la celda del día (rowspan) también cambie al mismo color */
+.tablaTrabajadoresFichajes tbody.bloque-dia:hover td[rowspan] {
+    background-color: #fff4e6 !important;
+}
+
+.positivo {
+    color: darkgreen;    
+}
+
+.negativo {
+    color: crimson;     
+}
+
+.tablaTrabajadoresFichajes td.positivo,
+.tablaTrabajadoresFichajes td.negativo {
+    vertical-align: middle;
+    text-align: center;             
+}
+
+.contenedorDatos {
+    display: flex;
+    justify-content: center; 
+    width: 100%;  
+}
+
+.datosTrabajador {        
+    padding: 10px 20px;
+    border-radius: 8px;    
+    width: 400px;       
+    background-color: #f9f9f9;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+}
+
+.datosTrabajador p {
+    margin: 10px 0; /* Espacio entre cada línea */
+    font-size: 16px;
+    color: #333;
+}
+
+.datosTrabajador strong {
+    color: #ff821c;
+}
+
+.SaldoPositivo {
+    background-color: darkgreen; 
+    color: white !important;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;    
+}
+
+.SaldoNegativo {
+    background-color: #D13815; 
+    color: white !important;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;    
 }
 
 /********************************************************************************************/
@@ -1386,6 +1538,14 @@ button.btFichaje:hover {
     }
 
     .cajasAdminTrabFilter {
+        width: 100%;
+    }
+
+    .cajasAdminTrabTable {
+        width: 100%;
+    }
+
+    .datosTrabajador {
         width: 100%;
     }
 
@@ -1483,6 +1643,10 @@ button.btFichaje:hover {
         content: "Nuevo Dep";
     }
 
+    .spacer>.btFichaje.btn-volver::after {
+        content: "Volver";
+    }
+
     .fila-mixta-buscar .form-group-crud {
         flex-grow: 1; 
     }
@@ -1510,6 +1674,10 @@ button.btFichaje:hover {
 
     .spacer>.btFichaje.btn-dep::after {
         content: "Nuevo Dep";
+    }
+
+    .spacer>.btFichaje.btn-volver::after {
+        content: "Volver";
     }
 
 }

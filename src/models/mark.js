@@ -107,8 +107,60 @@ const findAllMark = async ({ filtros = {}, sort, dir, limit, offset }) => {
 
 /********************************************************************************************/
 
+const findMarkTrabMes = async ({ dni, mes, dir, limit, offset }) => {
+
+    let query = `
+        SELECT m.id, m.dni, 
+            DATE_FORMAT(m.date, '%d-%m-%Y') as date, 
+            TIME_FORMAT(m.time, '%H:%i') as time, 
+            LPAD(m.incidencia, 5, '0') as incidencia
+        FROM marcajes m
+        WHERE m.dni = ? AND m.date LIKE ?`;
+
+    let countQuery = `
+        SELECT COUNT(*) as total 
+        FROM marcajes m 
+        WHERE m.dni = ? AND m.date LIKE ?`;
+    
+    const queryParams = [dni, `${mes}%`];
+    
+    const orderDir = (dir && dir.toUpperCase() === 'DESC') ? 'DESC' : 'ASC';    
+    query += ` ORDER BY m.date ${orderDir}, m.time ASC LIMIT ? OFFSET ?`;
+
+    try {        
+        const [rows] = await pool.execute(query, [...queryParams, String(limit), String(offset)]);
+        const [[{ total }]] = await pool.execute(countQuery, queryParams);
+
+        return {
+            fichajes: rows,
+            totalCount: total
+        };
+    } catch (error) {
+        throw error;
+    }
+};
+
+/********************************************************************************************/
+
+const findMarkTrabAll = async (dni) => {
+
+    const query = 'SELECT * FROM marcajes WHERE dni = ?';    
+
+    try {        
+        const [rows] = await pool.execute(query, [dni]);       
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+/********************************************************************************************/
+
 module.exports = {
     store,
     lastMark,
-    findAllMark
+    findAllMark,
+    findMarkTrabMes,
+    findMarkTrabAll
 };

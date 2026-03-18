@@ -39,5 +39,6 @@ router.delete("/departamentos/eliminar/:id", vToken.verifyTokenAdmin, controller
 
 /* Rutas para la Gestión de Fichajes e Incidencias */
 router.get("/fichajes", vToken.verifyTokenAdmin, controllerMark.listFichajes);
+router.get("/fichajes/:dni", vToken.verifyTokenAdmin, controllerMark.listFichajesTrab);
 
 module.exports = router;  //para poder exportar la ruta a otros códigos

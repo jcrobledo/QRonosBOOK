@@ -1,0 +1,155 @@
+<title><%= title %></title>
+<div class="cajasAdminTrabFilter fade-in">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/adminPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            Fichajes Mensual
+        </h2>    
+        <div class="spacer">  
+            <button type="button" 
+                class="btFichaje btn-volver"
+                hx-get="<%= urlVolver %>" 
+                hx-target="#secContenido"                
+                hx-push-url="true">
+                Volver
+            </button>           
+        </div>    
+    </div>
+
+    <div class="contenedorDatos">
+        <div class="datosTrabajador">    
+            <p><strong>Nombre:</strong> <%= trabajador.nombre %></p>
+            <p><strong>Apellidos:</strong> <%= trabajador.apellidos %></p>
+            <p><strong>DNI:</strong> <%= trabajador.dni %></p>
+            <p><strong>Días Trabajados:</strong> <%= fichajes.length %></p>
+            <p>
+                <strong>Saldo Mensual:</strong> 
+                    <span class="<%= esTotalPositivo ? 'SaldoPositivo' : 'SaldoNegativo' %>">
+                        <%= saldoTotalMes %>
+                    </span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="cajasAdminTrabTable fade-in">  
+
+    <div class="navegacion-fecha">    
+    
+        <span hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesAnterior %>&dir=<%= currentDir %>&from=<%= origen %>" 
+          hx-target="#secContenido"           
+          hx-push-url="true"
+          class="triangulo-nav">
+            &#9664;
+        </span>
+
+        <div class="info-fecha-texto">                     
+            <input type="month" 
+               name="fecha"  
+               value="<%= mesConsulta %>"              
+               max="<%= mesActual %>"
+               required 
+               hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?from=<%= origen %>" 
+               onclick="this.showPicker()"
+               onkeydown="return false;"
+               hx-target="#secContenido"                
+               hx-trigger="change"
+               hx-push-url="true"
+               class="input-calendario-nav">
+        </div>
+    
+        <% if (esMesActual) { %>
+            <span class="triangulo-nav triangulo-disabled">
+                &#9654;
+            </span>
+        <% } else { %>
+            <span hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesSiguiente %>&dir=<%= currentDir %>&from=<%= origen %>" 
+              hx-target="#secContenido"               
+              hx-push-url="true"
+              class="triangulo-nav">
+                &#9654;
+            </span>
+        <% } %>
+
+    </div>
+ 
+    <table class="tablaTrabajadoresFichajes">
+        <thead>
+            <tr>                                                
+                <th hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesConsulta %>&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido" 
+                    hx-push-url="true"                   
+                    class="sort-<%= currentDir.toLowerCase() %>"
+                    style="width: 100px;">
+                    Día
+                </th>
+                <th class="no-sort" style="width: 90px;">ID</th>
+                <th class="no-sort" style="width: 70px;">Tipo</th>
+                <th class="no-sort" style="width: 70px;">Fichaje</th>
+                <th class="no-sort" style="width: 60px;">Incidencia</th>
+                <th class="no-sort" style="width: 60px;">Saldo</th>                                
+            </tr>
+        </thead>
+        <% fichajes.forEach(function(dia) { %>
+            <tbody class="bloque-dia"> 
+                <% dia.parejas.forEach(function(p, indice) { %>
+                                    
+                <!-- Fila Entrada -->
+                <tr class="<%= p.entrada.incidencia ? 'fila-con-incidencia' : '' %>">                                       
+                    <% if (indice === 0) { %>
+                        <td rowspan="<%= dia.parejas.length * 2 %>">
+                            <%= dia.fecha %>
+                        </td>
+                    <% } %>
+                    <td><%= p.entrada.id %></td> 
+                    <td>Entrada</td>
+                    <td><%= p.entrada.hora %></td>
+                    <td><%= p.entrada.incidencia %></td>
+                    <% if (indice === 0) { %>
+                        <td rowspan="<%= dia.parejas.length * 2 %>" class="<%= dia.esPositivo ? 'positivo' : 'negativo' %>">
+                            <%= dia.saldo %>
+                        </td>
+                    <% } %>                    
+                </tr>
+
+                <!-- Fila Salida -->
+                <tr class="<%= p.salida.incidencia ? 'fila-con-incidencia' : '' %> <%= (indice === dia.parejas.length - 1) ? 'fin-dia' : '' %>">
+                    <td><%= p.salida.id %></td>                    
+                    <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %>">Salida</td>
+                    <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %>"><%= p.salida.hora %></td>
+                    <td><%= p.salida.incidencia %></td>
+                </tr>
+
+                <% }); %>
+            </tbody>
+        <% }); %>
+    </table>
+
+    <div class="info-paginacion">
+    
+        <div class="contador-resultados">
+            Mostrando <strong><%= desde %></strong> a <strong><%= hasta %></strong> de <strong><%= totalCount %></strong> fichajes
+        </div>    
+        <div class="botones-paginacion">
+            <% if (currentPage > 1) { %>
+                <button hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?page=<%= currentPage - 1 %>&dir=<%= currentDir %>"                          
+                        hx-target="#secContenido"
+                        class="btn-pag">Anterior</button>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+                <button hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?page=<%= currentPage + 1 %>&dir=<%= currentDir %>"                          
+                        hx-target="#secContenido"
+                        class="btn-pag">Siguiente</button>
+            <% } %>
+        </div>
+    </div>
+
+</div>

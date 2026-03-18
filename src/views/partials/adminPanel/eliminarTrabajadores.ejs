@@ -16,6 +16,16 @@
         </div>
     </div>    
 
+    <% if (tieneMarcajes) { %>
+        <div class="contenedor-alertas-crud" id="alertaError"> 
+            <div class="alert-style-crud-ko">
+                <span>⛔</span>
+                <p><strong>EL TRABAJADOR NO PUEDE SER ELIMINADO</strong><br><br>
+                <strong>LEY RDL 8/2019</strong><br>Exige la conservación<br> de los fichajes durante al menos cuatro años</p>
+            </div>
+        </div>
+    <% } %> 
+
     <form id="formEliminar" 
         class="formularioAlta"
         hx-delete="/adminPanel/trabajadores/eliminar/<%= trabajador.dni %>"  
@@ -61,9 +71,11 @@
                 hx-push-url="true">
                 Volver
             </button>
-            <button type="button" onclick="document.getElementById('modalConfirmar').style.display='flex'">
-                Eliminar
-            </button>            
+            <% if (!tieneMarcajes) { %>
+                <button type="button" onclick="document.getElementById('modalConfirmar').style.display='flex'">
+                    Eliminar
+                </button>     
+            <% } %>       
         </div>
     </form> 
     

@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const model = require("../models/user");
+const modelMark = require("../models/mark");
 const nodemailer = require("nodemailer");
 const { validationResult } = require('express-validator');
 
@@ -577,7 +578,10 @@ const eliminarTrabajador = async (req, res) => {
 
     const trabajador = await model.findByDniTrab(dniTrabajador);
     const departamento = await model.findDepById(trabajador.departamento);
+    const marcajes = await modelMark.findMarkTrabAll(dniTrabajador);
     const departamentoNombre = departamento[0].nombre;
+
+    const tieneMarcajes = marcajes.length > 0;
 
     if (isHTMX) {
       return res.render('partials/adminPanel/eliminarTrabajadores', {
@@ -585,7 +589,8 @@ const eliminarTrabajador = async (req, res) => {
         layout: false,
         userAdmin,
         trabajador,
-        departamentoNombre
+        departamentoNombre, 
+        tieneMarcajes
       });
     };
 
@@ -594,7 +599,8 @@ const eliminarTrabajador = async (req, res) => {
       layout: "./layouts/layout-adminPanel",
       userAdmin,
       trabajador,
-      departamentoNombre
+      departamentoNombre,
+      tieneMarcajes
     });
 
 

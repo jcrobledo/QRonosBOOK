@@ -149,7 +149,7 @@
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
                     class="<%= currentSort === 'date' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 110px;">
-                Dia</th>
+                Día</th>
                 <th hx-get="/adminPanel/fichajes?sort=time&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
@@ -177,9 +177,10 @@
                     <button class="btnAcciones">&middot;&middot;&middot;</button>
                     <div class="dropdown-table">
                         <ul>                            
-                            <li><a href="/adminPanel/fichajes/fichajes/<%= fichaje.dni %>"
-                                hx-get="/adminPanel/fichajes/fichajes/<%= fichaje.dni %>"
+                            <li><a href="/adminPanel/fichajes/<%= fichaje.dni %>"
+                                hx-get="/adminPanel/fichajes/<%= fichaje.dni %>"
                                 hx-target="#secContenido"
+                                hx-swap="innerHTML show:window:top"
                                 hx-push-url="true">
                                 Ver fichajes
                                 </a>
@@ -189,6 +190,7 @@
                                     <a href="/adminPanel/fichajes/incidencias/<%= fichaje.incidencia %>"
                                     hx-get="/adminPanel/fichajes/incidencias/<%= fichaje.incidencia %>"
                                     hx-target="#secContenido"
+                                    hx-swap="innerHTML show:window:top"
                                     hx-push-url="true">
                                         Ver Incidencia
                                 </a>
@@ -196,7 +198,7 @@
                                     <span class="incidencia-disabled">
                                         Ver Incidencia
                                     </span>
-    <%                          } %>
+                                <% } %>
                             </li>
                         </ul>
                     </div>
