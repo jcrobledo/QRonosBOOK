@@ -129,7 +129,7 @@ const listFichajesTrab = async (req, res) => {
   const dniTrabajador = req.params.dni;
   const { dir, page } = req.query;
 
-  const origen = req.query.from || 'fichajes'; 
+  const origen = req.query.from || 'fichajes';
   const urlVolver = origen === 'trabajadores' ? '/adminPanel/trabajadores' : '/adminPanel/fichajes';
 
   const mesActual = new Date().toISOString().slice(0, 7); // mes actual YYYY-MM    
@@ -146,7 +146,7 @@ const listFichajesTrab = async (req, res) => {
   fechaSig.setMonth(fechaSig.getMonth() + 1);
   const mesSiguiente = fechaSig.toISOString().slice(0, 7);
 
-  const currentDir = dir || 'ASC';
+  const currentDir = dir || 'DESC';
   const currentPage = parseInt(page) || 1;
   const limit = 150;
 
@@ -211,10 +211,10 @@ const listFichajesTrab = async (req, res) => {
       // Formato final: +00:15 o -01:30
       const saldoFormateado = `${diff >= 0 ? '+' : '-'}${String(horas).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
 
-      return { 
-        fecha: dia.fecha, 
+      return {
+        fecha: dia.fecha,
         parejas: parejas,
-        saldo:saldoFormateado,
+        saldo: saldoFormateado,
         esPositivo: diff >= 0,
         minutosPuros: diff // Guardamos esto para sumar el total luego
       };
@@ -222,10 +222,10 @@ const listFichajesTrab = async (req, res) => {
     });
 
     // --- CÁLCULO DEL SALDO TOTAL DEL MES ---
-const totalMinutosMes = fichajesFinales.reduce((acc, dia) => acc + dia.minutosPuros, 0);
-const hT = Math.floor(Math.abs(totalMinutosMes) / 60);
-const mT = Math.abs(totalMinutosMes) % 60;
-const saldoTotalMes = `${totalMinutosMes >= 0 ? '+' : '-'}${String(hT).padStart(2, '0')}:${String(mT).padStart(2, '0')}`;
+    const totalMinutosMes = fichajesFinales.reduce((acc, dia) => acc + dia.minutosPuros, 0);
+    const hT = Math.floor(Math.abs(totalMinutosMes) / 60);
+    const mT = Math.abs(totalMinutosMes) % 60;
+    const saldoTotalMes = `${totalMinutosMes >= 0 ? '+' : '-'}${String(hT).padStart(2, '0')}:${String(mT).padStart(2, '0')}`;
 
     if (isHTMX) {
       return res.render("partials/adminPanelMark/listaFichajesTrabMes", {

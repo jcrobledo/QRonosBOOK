@@ -1,0 +1,51 @@
+<title><%= title %></title>
+<div class="cajasPrincipales fade-in"  style="padding-top: 60px;">
+    <section>
+        <div class="content">
+            <div class="icon" 
+                hx-get="/trabPanel/miPerfil" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer">
+                <img src="/images/miPerfil.png" style="height:7rem;width:7rem" class="iconoScale">
+            </div>
+            <h3 class="h3_eleMenu" 
+                hx-get="/trabPanel/miPerfil" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer"
+                data-text="Mi Perfil">
+                Mi Perfil
+            </h3>
+        </div>
+    </section>      
+    <section>
+        <div class="content">
+            <div class="icon"
+                hx-get="/trabPanel/fichajes" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer">
+                <img src="/images/fichajes.png" style="height:7rem;width:7rem" class="iconoScale">
+            </div>
+            <h3 class="h3_eleMenu"
+                hx-get="/trabPanel/fichajes" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer"
+                data-text="Fichajes">
+                Fichajes
+            </h3>        
+        </div>
+    </section>
+    <section>
+        <div class="content">
+            <a href="" class="icon">
+                <img src="/images/incidencias.png" style="height:7rem;width:7rem" class="iconoScale">
+            </a>
+            <a href="" style="text-decoration:none">
+                <h3 class="h3_eleMenu" data-text="Incidencias">Incidencias</h3>
+            </a>
+        </div>
+    </section>
+</div>

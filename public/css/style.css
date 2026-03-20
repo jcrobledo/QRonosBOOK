@@ -1647,6 +1647,10 @@ button.btFichaje:hover {
         content: "Volver";
     }
 
+    .spacer>.btFichaje.btn-perfil::after {
+        content: "Cambiar Pass";
+    }
+
     .fila-mixta-buscar .form-group-crud {
         flex-grow: 1; 
     }
@@ -1678,6 +1682,10 @@ button.btFichaje:hover {
 
     .spacer>.btFichaje.btn-volver::after {
         content: "Volver";
+    }
+
+    .spacer>.btFichaje.btn-perfil::after {
+        content: "Cambiar Pass";
     }
 
 }

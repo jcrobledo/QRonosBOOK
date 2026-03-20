@@ -1,0 +1,171 @@
+<title><%= title %></title>
+<div class="cajasAdminTrabFilter fade-in">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/trabPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            Cambiar Contraseña
+        </h2>
+        <div class="spacer">                  
+        </div>
+    </div>   
+    
+    <div class="contenedor-alertas-crud">            
+        <div class="info-style-crud">             
+            <p style="font-size: 16px;"><strong>PATRÓN DE FORTIFICACIÓN DE CONTRASEÑA</strong><br>
+                Al menos 8 caracteres<br>
+                Al menos una mayúscula, una minúscula y un número<br>                
+                Al menos un símbolo !@#$%*+</p>
+        </div>        
+    </div>
+
+    <form id="formChangePass"
+        hx-put="/trabPanel/changePass" 
+        hx-target="#secContenido" 
+        hx-push-url="false"
+        class="formularioAlta">
+
+        <div class="form-group">
+            <input class="form-control <%= locals.mensajeOK ? 'readonly-style' : '' %>" type="password" 
+                id="passActual" name="passActual" autocomplete="off"
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%*+])[a-zA-Z\d!@#$%*+]{8,}$"
+                value="<%= locals.passActual || '' %>"
+                <%= locals.mensajeOK ? 'readonly' : '' %>
+                placeholder=" " required>
+            <label class="control-label" for="passActual">Contraseña Actual</label>
+            <span id="toggleActual" class="toggleEmoji">
+                👁️
+            </span>
+        </div>
+
+        <div class="form-group">
+            <input class="form-control <%= locals.mensajeOK ? 'readonly-style' : '' %>" type="password" 
+                id="passNueva" name="passNueva" autocomplete="off"
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%*+])[a-zA-Z\d!@#$%*+]{8,}$" 
+                value="<%= locals.passNueva || '' %>"
+                <%= locals.mensajeOK ? 'readonly' : '' %>
+                placeholder=" " required>
+            <label class="control-label" for="passNueva">Nueva Contraseña</label>
+            <span id="toggleNueva" class="toggleEmoji">
+                👁️
+            </span>
+        </div>
+
+        <div class="form-group">
+            <input class="form-control <%= locals.mensajeOK ? 'readonly-style' : '' %>" 
+                type="password" id="passRepetir" name="passRepetir" autocomplete="off"
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%*+])[a-zA-Z\d!@#$%*+]{8,}$"
+                value="<%= locals.passRepetir || '' %>"
+                <%= locals.mensajeOK ? 'readonly' : '' %>
+                placeholder=" " required>
+            <label class="control-label" for="passRepetir">Repetir Contraseña</label>
+            <span id="toggleRepetir" class="toggleEmoji">
+                👁️
+            </span>
+        </div>
+
+        <div class="fila-botones">
+            <button type="button" 
+                hx-get="/trabPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true">
+                Volver
+            </button>  
+            <% if (typeof mensajeOK === 'undefined' || !mensajeOK) { %>
+                <button type="submit">Cambiar</button>
+            <% } %>              
+        </div>
+    </form>  
+
+    <div class="contenedor-alertas-crud" style="margin-top: 20px; margin-bottom: 0px;">    
+        <% if (typeof mensajeERROR !== 'undefined' && mensajeERROR) { %>
+            <div class="alert-style-crud-ko">
+                <span>⛔</span>
+                <p><%- mensajeERROR %></p>
+            </div>
+        <% } %>
+        <% if (typeof mensajeOK !== 'undefined' && mensajeOK) { %>
+            <div class="alert-style-crud-ok">
+                <span class="icono-check">&#10004;</span>
+                <p><%- mensajeOK %></p>
+            </div>
+        <% } %>
+    </div>
+
+</div>
+
+<script>
+    
+    htmx.onLoad(function(content) {
+        
+        const grupos = content.querySelectorAll('.form-group');
+
+        grupos.forEach(grupo => {
+            const input = grupo.querySelector('input');
+            const emoji = grupo.querySelector('.toggleEmoji');
+
+            if (input && emoji) {                
+                const actualizarEstado = () => {
+                    if (input.value.length === 0) {
+                        input.type = 'password';
+                        emoji.style.opacity = "0.3";
+                        emoji.style.filter = "grayscale(100%)";
+                        emoji.style.pointerEvents = "none";
+                    } else if (input.type === 'password') {
+                        emoji.style.opacity = "1";
+                        emoji.style.filter = "none";
+                        emoji.style.pointerEvents = "auto";
+                    };
+                };
+
+                actualizarEstado();
+                
+                input.addEventListener('input', actualizarEstado);
+                
+                emoji.onclick = function() {
+                    const esPass = input.type === 'password';
+                    input.type = esPass ? 'text' : 'password';
+                    emoji.style.opacity = esPass ? "0.3" : "1";
+                    emoji.style.filter = esPass ? "grayscale(100%)" : "none";
+                };
+            };
+        });
+
+        const form = content.querySelector('#formChangePass');
+        if (form) {
+            const passActual = form.querySelector('#passActual');
+            const passNueva = form.querySelector('#passNueva');
+            const passRepetir = form.querySelector('#passRepetir');
+
+            const validarContrasenas = () => {                
+                if (passActual.value === passNueva.value && passNueva.value !== "") {
+                    passNueva.setCustomValidity("⚠️ La nueva contraseña no puede ser igual a la actual");
+                } else {
+                    passNueva.setCustomValidity("");
+                };
+                
+                if (passNueva.value !== passRepetir.value) {
+                    passRepetir.setCustomValidity("⚠️ Las contraseñas nuevas no coinciden");
+                } else {
+                    passRepetir.setCustomValidity("");
+                };
+            };
+            
+            passActual.addEventListener('input', validarContrasenas);
+            passNueva.addEventListener('input', validarContrasenas);
+            passRepetir.addEventListener('input', validarContrasenas);
+        };
+
+    });
+
+</script>
+
+
+
+
