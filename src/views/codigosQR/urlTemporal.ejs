@@ -82,6 +82,11 @@
 
     <h3 class="correcto" id="mgsFichCertOK">Fichaje guardado CORRECTAMENTE</h3>
     <h3 class="error" id="mgsFichCertKO">El usuario NO está dado de alta en el sistema</h3>
+
+    <div id="contenedor-salir" class="escondido contenedor-salir">
+        <button class="btFichaje" onclick="location.replace('/?callerForm=Ftrab')">Finalizar</button>
+    </div>
+    
 </div>
 
 <script>    
@@ -144,6 +149,7 @@
     } else if (fichajeOK == 'true') {
         document.getElementById('mgsFichajeOK').classList.remove('escondido');
         document.getElementById('mgsFichajeKO').classList.add('escondido');
+        document.getElementById('contenedor-salir').classList.remove('escondido');
     } else {
         document.getElementById('mgsFichajeOK').classList.add('escondido');
         document.getElementById('mgsFichajeKO').classList.remove('escondido');
@@ -157,9 +163,11 @@
     } else if (noUsuCert == 'true') {
         document.getElementById('mgsFichCertOK').classList.remove('escondido');
         document.getElementById('mgsFichCertKO').classList.add('escondido');
+        document.getElementById('contenedor-salir').classList.remove('escondido');
     } else {
         document.getElementById('mgsFichCertOK').classList.add('escondido');
         document.getElementById('mgsFichCertKO').classList.remove('escondido');
+        document.getElementById('contenedor-salir').classList.remove('escondido');
     };
 
     function mostrarBloqueo(event) {

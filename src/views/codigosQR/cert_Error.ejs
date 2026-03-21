@@ -1,9 +1,19 @@
         <div id="contenedor-adminPage_movil" class="contenedor-adminPage_movil">
-            <h3 class="error">Error al VALIDAR o PROCESAR el certificado</h3>            
+            
+            <h3 class="error">Error al VALIDAR o PROCESAR el certificado</h3>   
+
+            <% if (typeof mensajeOCSP != 'undefined') {  %>
+                <h3 class="error"><%= mensajeOCSP %></h3>
+            <% }; %>
+            
+            <div id="contenedor-salir" class="contenedor-salir">
+                <button class="btFichaje" onclick="location.replace('/?callerForm=Ftrab')">Finalizar</button>
+            </div>
+
         </div>           
 
-         <% if (typeof mensajeOCSP != 'undefined') {  %>
-            <h3 class="error"><%= mensajeOCSP %></h3>
-        <% }; %>
+         
+
+        
 
          

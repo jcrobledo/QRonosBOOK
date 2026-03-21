@@ -852,6 +852,11 @@ button.btFichaje:hover {
     margin-top: 25px;
 }
 
+.contenedor-salir {
+     text-align: center; 
+     margin-top: 20px;
+}
+
 .escondido {
     display: none;
 }
