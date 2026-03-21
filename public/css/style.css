@@ -1659,7 +1659,7 @@ button.btFichaje:hover {
 
 /********************************************************************************************/
 
-@media screen and (max-width: 426px) {
+@media screen and (max-width: 500px) { 
 
     .spacer>button.btFichaje {
         font-size: 0;
@@ -1686,6 +1686,26 @@ button.btFichaje:hover {
 
     .spacer>.btFichaje.btn-perfil::after {
         content: "Cambiar Pass";
+    }
+
+    .formularioAlta {        
+        min-width: 0;         
+        width: 100%;         
+    }
+
+    .info-style-crud {        
+        min-width: 0;         
+        width: 100%;         
+    }
+
+    .alert-style-crud-ok {        
+        min-width: 0;         
+        width: 100%;         
+    }
+
+    .alert-style-crud-ko {        
+        min-width: 0;         
+        width: 100%;         
     }
 
 }

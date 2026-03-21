@@ -8,7 +8,7 @@
     <div class="columna-derecha">
         <div id="bloque-admin" class="contenedor-formulario">
             <h3 id="tituloFormulario">TituloFormulario</h3>
-            <form id="formulario" class="formulario" method="post">
+            <form id="myForm" class="formulario" method="post">
                 <div class="form-group">
                     <input class="form-control" type="text" id="dni" name="dni" maxlength="9" minlength="9"
                         pattern=".{8}[A-Z]" autocomplete="off" placeholder=" " required
@@ -58,7 +58,7 @@
     const enlaceQR = document.getElementById('enlaceQR');    
     const formularioShow = document.getElementById('bloque-admin');
     const btnCancelar = document.getElementById('btn-cancelar');
-    const formulario = document.getElementById('formulario');
+    const formulario = document.getElementById('myForm');
     const tituloFormulario = document.getElementById('tituloFormulario');
     const flashAlert = document.getElementById('flash-alert');
     const flashLogout = document.getElementById('flash-logout');
