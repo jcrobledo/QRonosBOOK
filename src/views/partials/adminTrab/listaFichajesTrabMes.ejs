@@ -101,10 +101,44 @@
                             <%= dia.fecha %>
                         </td>
                     <% } %>
-                    <td><%= p.entrada.id %></td> 
+                    <td class="celda-menu">
+                        <span class="spanAcciones"><%= p.entrada.id %></span>
+                        <div class="dropdown-table">
+                            <ul>                            
+                                <li><a href="/trabPanel/incidencias/modificar?idMarcaje=<%= p.entrada.id %>&date=<%= dia.fecha %>&time=<%= p.entrada.hora %>&from=fichajes"
+                                    hx-get="/trabPanel/incidencias/modificar?idMarcaje=<%= p.entrada.id %>&date=<%= dia.fecha %>&time=<%= p.entrada.hora %>&from=fichajes"
+                                    hx-target="#secContenido"
+                                    hx-swap="innerHTML show:window:top"
+                                    hx-push-url="true">
+                                    Modificar (Incidencia)
+                                    </a>
+                                </li>
+                                <li><a href="/trabPanel/incidencias/eliminar?idMarcaje=<%= p.entrada.id %>&date=<%= dia.fecha %>&time=<%= p.entrada.hora %>&from=fichajes"
+                                    hx-get="/trabPanel/incidencias/eliminar?idMarcaje=<%= p.entrada.id %>&date=<%= dia.fecha %>&time=<%= p.entrada.hora %>&from=fichajes"
+                                    hx-target="#secContenido"
+                                    hx-swap="innerHTML show:window:top"
+                                    hx-push-url="true">
+                                    Eliminar (Incidencia)
+                                    </a>
+                                </li>                               
+                            </ul>
+                        </div>
+                    </td> 
                     <td>Entrada</td>
                     <td><%= p.entrada.hora %></td>
-                    <td><%= p.entrada.incidencia %></td>
+                    <td>
+                        <% if (p.entrada.incidencia) { %>
+                            <a href="/trabPanel/incidencias/consultar/<%= p.entrada.incidencia %>"
+                                hx-get="/trabPanel/incidencias/consultar/<%= p.entrada.incidencia %>"
+                                hx-target="#secContenido"
+                                hx-swap="innerHTML show:window:top"
+                                hx-push-url="true"
+                                title="Ver Incidencia"
+                                class="link-incidencia">
+                                <%= p.entrada.incidencia %>
+                            </a>
+                        <% } %>
+                    </td>
                     <% if (indice === 0) { %>
                         <td rowspan="<%= dia.parejas.length * 2 %>" class="<%= dia.esPositivo ? 'positivo' : 'negativo' %>">
                             <%= dia.saldo %>
@@ -114,10 +148,59 @@
 
                 <!-- Fila Salida -->
                 <tr class="<%= p.salida.incidencia ? 'fila-con-incidencia' : '' %> <%= (indice === dia.parejas.length - 1) ? 'fin-dia' : '' %>">
-                    <td><%= p.salida.id %></td>                    
-                    <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %>">Salida</td>
+                    <td class="celda-menu">
+                        <span class="spanAcciones"><%= p.salida.id %></span>
+                        <div class="dropdown-table">
+                            <ul>                            
+                                <li><a href="/trabPanel/incidencias/modificar?idMarcaje=<%= p.salida.id %>&date=<%= dia.fecha %>&time=<%= p.salida.hora %>&from=fichajes"
+                                    hx-get="/trabPanel/incidencias/modificar?idMarcaje=<%= p.salida.id %>&date=<%= dia.fecha %>&time=<%= p.salida.hora %>&from=fichajes"
+                                    hx-target="#secContenido"
+                                    hx-swap="innerHTML show:window:top"
+                                    hx-push-url="true">
+                                    Modificar (Incidencia)
+                                    </a>
+                                </li>
+                                <li><a href="/trabPanel/incidencias/eliminar?idMarcaje=<%= p.salida.id %>&date=<%= dia.fecha %>&time=<%= p.salida.hora %>&from=fichajes"
+                                    hx-get="/trabPanel/incidencias/eliminar?idMarcaje=<%= p.salida.id %>&date=<%= dia.fecha %>&time=<%= p.salida.hora %>&from=fichajes"
+                                    hx-target="#secContenido"
+                                    hx-swap="innerHTML show:window:top"
+                                    hx-push-url="true">
+                                    Eliminar (Incidencia)
+                                    </a>
+                                </li>                               
+                            </ul>
+                        </div>
+                    </td>                    
+                    <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %> celda-menu">
+                        <span class="<%= p.salida.hora === '--:--' ? 'spanAccionesAlt' : '' %>">Salida</span>
+                        <% if (p.salida.hora === '--:--') { %>
+                            <div class="dropdown-table">
+                                <ul>                            
+                                    <li><a href="/trabPanel/incidencias/crear?date=<%= dia.fecha %>&from=fichajes"
+                                            hx-get="/trabPanel/incidencias/crear?date=<%= dia.fecha %>&from=fichajes"
+                                            hx-target="#secContenido"
+                                            hx-swap="innerHTML show:window:top"
+                                            hx-push-url="true">
+                                        Crear (Incidencia)
+                                        </a>
+                                    </li>                                                             
+                                </ul>
+                            </div>
+                        <% } %>
+                    </td>
                     <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %>"><%= p.salida.hora %></td>
-                    <td><%= p.salida.incidencia %></td>
+                    <td>
+                        <% if (p.salida.incidencia) { %>
+                            <a href="/trabPanel/incidencias/consultar/<%= p.salida.incidencia %>"
+                                hx-get="/trabPanel/incidencias/consultar/<%= p.salida.incidencia %>"
+                                hx-target="#secContenido"
+                                hx-swap="innerHTML show:window:top"
+                                hx-push-url="true"
+                                title="Ver Incidencia"
+                                class="link-incidencia">
+                                <%= p.salida.incidencia %>
+                            </a>
+                        <% } %>                        
                 </tr>
 
                 <% }); %>

@@ -1,0 +1,89 @@
+<title><%= title %></title>
+<div class="cajasAdminTrabFilter fade-in">
+    <div id="contenedorCabecera" class="contenedorCabecera">
+        <div class="secMenu">
+            <img src="/images/inicio.png" 
+                hx-get="/trabPanel" 
+                hx-target="#secContenido"
+                hx-push-url="true"
+                style="cursor:pointer; height:3.5rem; width:3.5rem;"                
+                class="iconoScale">            
+        </div>
+        <h2 class="correcto tituloCabecera">
+            Consulta Detallada de Incidencia
+        </h2>
+        <div class="spacer">            
+        </div>
+    </div>     
+
+    <form class="formularioAlta">        
+
+        <div class="fila-mixta">
+
+            <div class="form-group-crud">
+                <input class="form-control input-id-inc readonly-style" 
+                    type="text" id="id" name="id"                      
+                    value="<%= idFormateado %>" readonly>
+                <label class="control-label" for="id">ID Incidencia</label>
+            </div>  
+
+            <div class="form-group-crud">
+                <input class="form-control input-id-inc readonly-style" 
+                    type="text" id="idMarcaje" name="idMarcaje"                      
+                    value="<%= incidencia.idMarcaje %>" readonly>
+                <label class="control-label" for="idMarcaje">ID Fichaje</label>
+            </div>                        
+        </div>
+
+        <div class="form-group-crud">
+            <input class="form-control readonly-style
+                <%= incidencia.resolucion === 'Aceptada' ? 'positivo_inc_consult' : '' %> 
+                <%= incidencia.resolucion === 'Rechazada' ? 'negativo_inc_consult' : '' %>" 
+                type="text" id="resolucion" name="resolucion"                      
+                value="<%= incidencia.resolucion %>" readonly>
+            <label class="control-label" for="resolucion">Resolución</label>
+        </div>  
+
+        <div class="form-group-crud">
+            <input class="form-control readonly-style" 
+                type="text" id="tipoInc" name="tipoInc"                      
+                value="<%= tipoIncMap[incidencia.tipoInc] %>" readonly>
+            <label class="control-label" for="tipoInc">Tipo Incidencia</label>
+        </div>  
+
+        <div class="form-group-crud">
+            <input class="form-control readonly-style" 
+                type="date" id="fechaFich" name="fechaFich"                
+                value="<%= incidencia.date %>" readonly>
+            <label class="control-label" for="fechaFich">Fecha Fichaje</label>
+        </div>
+        
+        <div class="form-group-crud">
+            <input class="form-control readonly-style" 
+                type="time" id="horaFich" name="horaFich"                 
+                value="<%= incidencia.time.slice(0, 5) %>" readonly>
+            <label class="control-label" for="horaFich">Hora Fichaje</label>
+        </div>      
+        
+        <% if (incidencia.tipoInc == 2) { %>
+            <div class="form-group-crud">
+                <input class="form-control readonly-style" 
+                    type="time" id="horaNewFich" name="horaNewFich"                 
+                    value="<%= incidencia.timeChange.slice(0, 5) %>" readonly>
+                <label class="control-label" for="horaNewFich">Hora Nueva</label>
+            </div>
+        <% } %>
+
+        <div class="fila-botones" style="margin-top: 10px;">
+            <button type="button" 
+                hx-get="/trabPanel/fichajes" 
+                hx-target="#secContenido"
+                hx-push-url="true">
+                Volver  
+            </button>                    
+        </div>
+    </form>    
+</div>
+
+
+

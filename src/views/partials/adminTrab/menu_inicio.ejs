@@ -40,12 +40,21 @@
     </section>
     <section>
         <div class="content">
-            <a href="" class="icon">
+            <div class="icon"
+                hx-get="/trabPanel/incidencias" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer">
                 <img src="/images/incidencias.png" style="height:7rem;width:7rem" class="iconoScale">
-            </a>
-            <a href="" style="text-decoration:none">
-                <h3 class="h3_eleMenu" data-text="Incidencias">Incidencias</h3>
-            </a>
+            </div>
+            <h3 class="h3_eleMenu"
+                hx-get="/trabPanel/incidencias" 
+                hx-target="#secContenido" 
+                hx-push-url="true"
+                style="cursor:pointer"
+                data-text="Incidencias">
+                Incidencias
+            </h3>        
         </div>
-    </section>
+    </section>    
 </div>

@@ -3,10 +3,31 @@ const pool = require('./mysql');
 /********************************************************************************************/
 
 const store = async (marcaje) => {
+
     const sql = 'INSERT INTO marcajes (id, dni, date, time) VALUES (?, ?, ?, ?)';
+
     try {
+
         const [result] = await pool.execute(sql, [marcaje.id, marcaje.dni, marcaje.date, marcaje.time]);
         return result.insertId;
+
+    } catch (error) {
+        throw error;
+    };
+
+};
+
+/********************************************************************************************/
+
+const lastMark = async () => {
+
+    const sql = 'SELECT * FROM marcajes ORDER BY id DESC LIMIT 1';
+
+    try {
+
+        const [result] = await pool.execute(sql);
+        return result;
+
     } catch (error) {
         throw error;
     };
@@ -14,11 +35,15 @@ const store = async (marcaje) => {
 
 /********************************************************************************************/
 
-const lastMark = async () => {
-    const sql = 'SELECT * FROM marcajes ORDER BY id DESC LIMIT 1';
+const lastMarkDay = async (fecha) => {
+
+    const sql = 'SELECT * FROM marcajes WHERE date = ? ORDER BY id DESC LIMIT 1';
+
     try {
-        const [result] = await pool.execute(sql);
+
+        const [result] = await pool.execute(sql, [fecha]);
         return result;
+
     } catch (error) {
         throw error;
     };
@@ -157,10 +182,189 @@ const findMarkTrabAll = async (dni) => {
 
 /********************************************************************************************/
 
+const storeIncidencia = async (incidencia) => {
+
+    const sql = 'INSERT INTO incidencias (dni, idMarcaje, date, time, timeChange, tipoInc, resolucion) VALUES (?, ?, ?, ?, ?, ?, ?)';
+
+    try {
+
+        const [result] = await pool.execute(sql, [incidencia.dniTrabajador, incidencia.idMarcaje,
+                                                incidencia.fecha, incidencia.hora, incidencia.horaNueva, 
+                                                incidencia.tipo, incidencia.resolucion]);
+        return result.insertId;
+
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const findAllIncTrab = async ({ dni, filtros = {}, sort, dir, limit, offset }) => {
+
+    let query = `
+        SELECT 
+            LPAD(i.id, 5, '0') as id, 
+            i.idMarcaje, 
+            DATE_FORMAT(i.date, '%d-%m-%Y') as date, 
+            TIME_FORMAT(i.time, '%H:%i') as time, 
+            TIME_FORMAT(i.timeChange, '%H:%i') as timeChange, 
+            i.tipoInc, 
+            i.resolucion
+        FROM incidencias i
+        WHERE i.dni = ?`;
+
+    let countQuery = `
+        SELECT COUNT(*) as total
+        FROM incidencias i
+        WHERE i.dni = ?`;
+
+    let queryParams = [dni];
+    let whereClauses = [];
+
+    if (filtros.estado && filtros.estado !== 'todas') {
+        whereClauses.push("i.resolucion = ?");
+        queryParams.push(filtros.estado);
+    };
+
+    if (whereClauses.length > 0) {
+        const extraWhere = " AND " + whereClauses.join(" AND ");
+        query += extraWhere;
+        countQuery += extraWhere;
+    };
+
+    const validColumns = ['id', 'idMarcaje', 'date', 'time', 'timeChange', 'tipoInc', 'resolucion'];
+    let orderBy = validColumns.includes(sort) ? `i.${sort}` : 'i.id';
+
+    if (sort === 'date') orderBy = 'i.date'; 
+    if (sort === 'time') orderBy = 'i.time';
+    if (sort === 'timeChange') orderBy = 'i.timeChange';
+
+    const orderDir = (dir && dir.toUpperCase() === 'DESC') ? 'DESC' : 'ASC'; 
+    
+    query += ` ORDER BY ${orderBy} ${orderDir}, i.id ${orderDir} LIMIT ? OFFSET ?`;
+
+    try {
+        const [rows] = await pool.execute(query, [...queryParams, String(limit), String(offset)]);
+        const [[{ total }]] = await pool.execute(countQuery, queryParams);
+        
+        return {
+            incidencias: rows,
+            totalCount: total
+        };
+
+    } catch (error) {
+        throw error;
+    };
+
+};
+
+/********************************************************************************************/
+
+const findAllTiposInc = async () => {
+
+    const sql = 'SELECT * FROM incidenciaTipo';
+
+    try {
+        const [rows] = await pool.execute(sql);
+        return rows;
+    } catch (error) {
+        throw error;
+    };
+
+};
+
+/********************************************************************************************/
+
+const findMarkTrabByIdInc = async (idMarcaje, dniTrabajador) => {
+
+    const sql = 'SELECT * FROM incidencias WHERE idMarcaje = ? AND dni = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [idMarcaje, dniTrabajador]);
+        return rows; 
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const findMarkByIdTrab = async (idMarcaje, dniTrabajador) => {
+
+    const sql = 'SELECT * FROM marcajes WHERE id = ? AND dni = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [idMarcaje, dniTrabajador]);
+        return rows[0]; 
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const deleteRegInc = async (idIncidencia) => {
+
+    const sql = 'DELETE FROM incidencias WHERE id = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [idIncidencia]);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const findIncidenciaByIdTrab = async (idIncidencia, dniTrabajador) => {
+
+    const sql = 'SELECT * FROM incidencias WHERE id = ? AND dni = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [idIncidencia, dniTrabajador]);
+        return rows[0];
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const findAllTipoInc = async () => {
+
+    const sql = 'SELECT * FROM incidenciaTipo';
+
+    try {
+        const [rows] = await pool.execute(sql);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
 module.exports = {
     store,
     lastMark,
+    lastMarkDay,
     findAllMark,
     findMarkTrabMes,
-    findMarkTrabAll
+    findMarkTrabAll,
+    storeIncidencia,
+    findAllIncTrab,
+    findAllTiposInc,
+    findMarkTrabByIdInc,
+    findMarkByIdTrab,
+    deleteRegInc,   
+    findIncidenciaByIdTrab,
+    findAllTipoInc
 };

@@ -365,7 +365,7 @@ const changePass = async (req, res) => {
     const passOK = await bcrypt.compare(passActual, queryTrab.password);
     const passNuevaOK = passNueva === passRepetir;
     let mensajeERROR = "";
-    let mensajeOK = "";    
+    let mensajeOK = "";
 
     if (!passNuevaOK) {
       mensajeERROR = "Las contraseñas nuevas NO coinciden entre sí";
@@ -391,7 +391,7 @@ const changePass = async (req, res) => {
         mensajeERROR,
         mensajeOK,
         passActual,
-        passNueva, 
+        passNueva,
         passRepetir
       });
     }
@@ -403,8 +403,613 @@ const changePass = async (req, res) => {
       mensajeERROR,
       mensajeOK,
       passActual,
-      passNueva, 
+      passNueva,
       passRepetir
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('trabPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userTrab
+      });
+    }
+    return res.render("trabPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-trabPanel",
+      userTrab
+    });
+  };
+
+};
+
+/********************************************************************************************/
+
+const listIncidenciasTrab = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.user.dni;
+
+  const { filtro, sort, dir, page } = req.query;
+  const filtros = {
+    estado: filtro || 'todas'
+  };
+
+  const currentSort = sort || 'idInc';
+  const currentDir = dir || 'DESC';
+  const currentPage = parseInt(page) || 1;
+  const limit = 8;
+
+  try {
+    const { incidencias, totalCount } = await modelMark.findAllIncTrab({
+      dni: dniTrabajador,
+      filtros,
+      sort: currentSort,
+      dir: currentDir,
+      limit: limit,
+      offset: (currentPage - 1) * limit
+    });
+
+    const tiposIncidencias = await modelMark.findAllTiposInc();
+
+    const tipoIncMap = {};
+    tiposIncidencias.forEach((item) => {
+      tipoIncMap[item.id] = item.tipo;
+    });
+
+    const desde = totalCount === 0 ? 0 : (currentPage - 1) * limit + 1;
+    const hasta = Math.min(currentPage * limit, totalCount);
+
+    if (isHTMX) {
+      return res.render("partials/adminTrab/listaIncidenciasTrab", {
+        title: "Gestión de Incidencias",
+        layout: false,
+        userTrab,
+        incidencias,
+        tipoIncMap,
+        filtros,
+        currentSort,
+        currentDir,
+        currentPage,
+        desde,
+        hasta,
+        totalPages: Math.ceil(totalCount / limit),
+        totalCount
+      });
+    }
+
+    return res.render("partials/adminTrab/listaIncidenciasTrab", {
+      title: "Gestión de Incidencias",
+      layout: "./layouts/layout-trabPanel",
+      userTrab,
+      incidencias,
+      tipoIncMap,
+      filtros,
+      currentSort,
+      currentDir,
+      currentPage,
+      desde,
+      hasta,
+      totalPages: Math.ceil(totalCount / limit),
+      totalCount
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('trabPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userTrab
+      });
+    }
+    return res.render("trabPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-trabPanel",
+      userTrab
+    });
+  };
+
+};
+
+/********************************************************************************************/
+
+const crearIncidencia = (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+
+  const origen = req.query.from || 'incidencias'; 
+  const urlVolver = origen === 'fichajes' ? '/trabPanel/fichajes' : '/trabPanel/incidencias';
+
+  let fechaDesdeFich = req.query.date; 
+
+  if (fechaDesdeFich && fechaDesdeFich.includes('-')) {
+      const partes = fechaDesdeFich.split('-');       
+      if (partes[0].length === 2) {
+          fechaDesdeFich = `${partes[2]}-${partes[1]}-${partes[0]}`; // Lo monta como AAAA-MM-DD
+      };
+  };  
+
+  const hoy = new Date().toLocaleDateString('en-CA'); // Formato YYYY-MM-DD y sin desfases zona horaria, útil para SQL
+
+  if (isHTMX) {
+    return res.render("partials/adminTrab/crearIncidencia", {
+      title: "Incidencia Nuevo Fichaje",
+      layout: false,
+      userTrab,
+      hoy,
+      fechaDesdeFich,
+      urlVolver
+    });
+  }
+
+  return res.render("partials/adminTrab/crearIncidencia", {
+    title: "Incidencia Nuevo Fichaje",
+    layout: "./layouts/layout-trabPanel",
+    userTrab,
+    hoy,
+    fechaDesdeFich,
+    urlVolver
+  });
+
+};
+
+/********************************************************************************************/
+
+const createIncidencia = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+
+  const incidencia = {
+    dniTrabajador: req.user.dni,
+    idMarcaje: null,
+    fecha: req.body.fechaInc,
+    hora: req.body.horaInc,
+    horaNueva: null,
+    tipo: 1, // Tipo 1 = Crear Fichaje
+    resolucion: "Pendiente"
+  };
+
+  try {
+
+    const nuevaIncidenciaId = await modelMark.storeIncidencia(incidencia);
+    const idFormateado = nuevaIncidenciaId.toString().padStart(5, '0');
+
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render("partials/adminTrab/confirmCrearInc", {
+        title: "Confirmación Alta Incidencia",
+        layout: false,
+        userTrab,
+        mensajeOK: `Incidencia creada CORRECTAMENTE con ID ${idFormateado}`,
+        fecha: incidencia.fecha,
+        hora: incidencia.hora
+      });
+    }
+
+    return res.render("partials/adminTrab/confirmCrearInc", {
+      title: "Confirmación Alta Incidencia",
+      layout: "./layouts/layout-trabPanel",
+      userTrab,
+      mensajeOK: `Incidencia creada CORRECTAMENTE con ID ${idFormateado}`,
+      fecha: incidencia.fecha,
+      hora: incidencia.hora
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('trabPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userTrab
+      });
+    }
+    return res.render("trabPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-trabPanel",
+      userTrab
+    });
+  };
+
+};
+
+/********************************************************************************************/
+
+const modificarIncidencia = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.user.dni;
+
+  const origen = req.query.from || 'incidencias'; 
+  const urlVolver = origen === 'fichajes' ? '/trabPanel/fichajes' : '/trabPanel/incidencias';
+
+  let fechaDesdeFich = req.query.date; 
+
+  if (fechaDesdeFich && fechaDesdeFich.includes('-')) {
+      const partes = fechaDesdeFich.split('-');       
+      if (partes[0].length === 2) {
+          fechaDesdeFich = `${partes[2]}-${partes[1]}-${partes[0]}`; // Lo monta como AAAA-MM-DD
+      };
+  };  
+
+  let idMarcaje = req.query.idMarcaje || null;
+  let marcaje = null;
+  let marcajeInc = null;
+  let mensajeError = null;
+  let mensajeOK = null;
+
+  if (idMarcaje && req.method === 'GET') {
+    marcaje = {
+      id: idMarcaje,
+      date: fechaDesdeFich,
+      time: req.query.time 
+    };
+  };
+
+  if (req.method === 'POST') {
+    idMarcaje = req.body.idMarcaje;
+
+    try {
+
+      marcaje = await modelMark.findMarkByIdTrab(idMarcaje, dniTrabajador);
+      marcajeInc = await modelMark.findMarkTrabByIdInc(idMarcaje, dniTrabajador);
+
+      if (!marcaje) {
+        mensajeError = "No EXISTE ningún FICHAJE con este ID para el Trabajador";
+      } else {
+        const incidenciaPendiente = marcajeInc.find(fila => fila.resolucion === "Pendiente");
+        if (incidenciaPendiente) {
+          marcaje = null;
+          mensajeError = `YA hay una INCIDENCIA con ID ${incidenciaPendiente.id.toString().padStart(5, '0')} PENDIENTE para este FICHAJE.<br>No se puede MODIFICAR hasta que se resuelva`;
+        } else {
+          mensajeOK = "OK";
+        }
+      };
+
+    } catch (error) {
+      console.error("Error general de acceso a BBDD:", error);
+      if (isHTMX) {
+        res.setHeader('HX-Retarget', '#secContenido');
+        return res.render('trabPanel/errorGeneral', {
+          title: "Error General",
+          layout: false,
+          userTrab
+        });
+      }
+      return res.render("trabPanel/errorGeneral", {
+        title: "Error General",
+        layout: "./layouts/layout-trabPanel",
+        userTrab
+      });
+    };
+  };
+
+  if (isHTMX) {
+    return res.render("partials/adminTrab/editarIncidencia", {
+      title: "Incidencia Modificar Fichaje",
+      layout: false,
+      userTrab,
+      marcaje,
+      idMarcaje,
+      mensajeError,
+      mensajeOK,
+      urlVolver
+    });
+  }
+  return res.render("partials/adminTrab/editarIncidencia", {
+    title: "Incidencia Modificar Fichaje",
+    layout: "./layouts/layout-trabPanel",
+    userTrab,
+    marcaje,
+    idMarcaje,
+    mensajeError,
+    mensajeOK,
+    urlVolver
+  });
+
+};
+
+/********************************************************************************************/
+
+const updateIncidencia = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.user.dni;
+
+  const incidencia = {
+    dniTrabajador: dniTrabajador,
+    idMarcaje: req.body.idMarcaje,
+    fecha: req.body.fechaFich,
+    hora: req.body.horaFich,
+    horaNueva: req.body.horaNewFich,
+    tipo: 2, // Tipo 2 = Modificar Fichaje
+    resolucion: "Pendiente"
+  }; 
+  
+  try {
+
+    const nuevaIncidenciaId = await modelMark.storeIncidencia(incidencia);
+    const idFormateado = nuevaIncidenciaId.toString().padStart(5, '0');
+    const mensajeExito = `Incidencia de MODIFICACIÓN de Fichaje Registrada<br>CORRECTAMENTE con ID ${idFormateado} `;    
+
+    if (isHTMX) {
+      return res.render("partials/adminTrab/confirmEditarInc", {
+        title: "Confirmación Alta Incidencia",
+        layout: false,
+        userTrab,
+        incidencia,        
+        mensajeExito
+      });
+    }
+    return res.render("partials/adminTrab/confirmEditarInc", {
+      title: "Confirmación Alta Incidencia",
+      layout: "./layouts/layout-trabPanel",
+      userTrab,
+      incidencia,
+      mensajeExito
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('trabPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userTrab
+      });
+    }
+    return res.render("trabPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-trabPanel",
+      userTrab
+    });
+  };
+
+};
+
+/********************************************************************************************/
+
+const eliminarIncidencia = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.user.dni;
+
+  const origen = req.query.from || 'incidencias'; 
+  const urlVolver = origen === 'fichajes' ? '/trabPanel/fichajes' : '/trabPanel/incidencias';
+
+  let fechaDesdeFich = req.query.date; 
+
+  if (fechaDesdeFich && fechaDesdeFich.includes('-')) {
+      const partes = fechaDesdeFich.split('-');       
+      if (partes[0].length === 2) {
+          fechaDesdeFich = `${partes[2]}-${partes[1]}-${partes[0]}`; // Lo monta como AAAA-MM-DD
+      };
+  };  
+
+  let idMarcaje = req.query.idMarcaje || null;
+  let marcaje = null;
+  let marcajeInc = null;
+  let mensajeError = null;
+  let mensajeOK = null;
+
+  if (idMarcaje && req.method === 'GET') {
+    marcaje = {
+      id: idMarcaje,
+      date: fechaDesdeFich,
+      time: req.query.time 
+    };
+  };
+
+  if (req.method === 'POST') {
+    idMarcaje = req.body.idMarcaje;
+
+    try {
+
+      marcaje = await modelMark.findMarkByIdTrab(idMarcaje, dniTrabajador);
+      marcajeInc = await modelMark.findMarkTrabByIdInc(idMarcaje, dniTrabajador);
+
+      if (!marcaje) {
+        mensajeError = "No EXISTE ningún FICHAJE con este ID para el Trabajador";
+      } else {
+        const incidenciaPendiente = marcajeInc.find(fila => fila.resolucion === "Pendiente");
+        if (incidenciaPendiente) {
+          marcaje = null;
+          mensajeError = `YA hay una INCIDENCIA con ID ${incidenciaPendiente.id.toString().padStart(5, '0')} PENDIENTE para este FICHAJE.<br>No se puede ELIMINAR hasta que se resuelva`;
+        } else {
+          mensajeOK = "OK";
+        }
+      };
+
+    } catch (error) {
+      console.error("Error general de acceso a BBDD:", error);
+      if (isHTMX) {
+        res.setHeader('HX-Retarget', '#secContenido');
+        return res.render('trabPanel/errorGeneral', {
+          title: "Error General",
+          layout: false,
+          userTrab
+        });
+      }
+      return res.render("trabPanel/errorGeneral", {
+        title: "Error General",
+        layout: "./layouts/layout-trabPanel",
+        userTrab
+      });
+    };
+  };
+
+  if (isHTMX) {
+    return res.render("partials/adminTrab/eliminarIncidencia", {
+      title: "Incidencia Eliminar Fichaje",
+      layout: false,
+      userTrab,
+      marcaje,
+      idMarcaje,
+      mensajeError,
+      mensajeOK,
+      urlVolver
+    });
+  }
+  return res.render("partials/adminTrab/eliminarIncidencia", {
+    title: "Incidencia Eliminar Fichaje",
+    layout: "./layouts/layout-trabPanel",
+    userTrab,
+    marcaje,
+    idMarcaje,
+    mensajeError,
+    mensajeOK,
+    urlVolver
+  });
+
+};
+
+/********************************************************************************************/
+
+const deleteIncidencia = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];
+  const dniTrabajador = req.user.dni;
+
+  const incidencia = {
+    dniTrabajador: dniTrabajador,
+    idMarcaje: req.body.idMarcaje,
+    fecha: req.body.fechaFich,
+    hora: req.body.horaFich,
+    horaNueva: null,
+    tipo: 3, // Tipo 3 = Eliminar Fichaje
+    resolucion: "Pendiente"
+  }; 
+  
+  try {
+
+    const nuevaIncidenciaId = await modelMark.storeIncidencia(incidencia);
+    const idFormateado = nuevaIncidenciaId.toString().padStart(5, '0');
+    const mensajeExito = `Incidencia de ELIMINACIÓN de Fichaje Registrada<br>CORRECTAMENTE con ID ${idFormateado} `;    
+
+    if (isHTMX) {
+      return res.render("partials/adminTrab/confirmEliminarInc", {
+        title: "Confirmación Alta Incidencia",
+        layout: false,
+        userTrab,
+        incidencia,        
+        mensajeExito
+      });
+    }
+    return res.render("partials/adminTrab/confirmEliminarInc", {
+      title: "Confirmación Alta Incidencia",
+      layout: "./layouts/layout-trabPanel",
+      userTrab,
+      incidencia,
+      mensajeExito
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('trabPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userTrab
+      });
+    }
+    return res.render("trabPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-trabPanel",
+      userTrab
+    });
+  };
+
+};
+
+/********************************************************************************************/
+
+const deleteRegIncidencia = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];  
+  const idIncidencia = req.params.id;
+
+  try {
+
+    const result = await modelMark.deleteRegInc(idIncidencia);
+
+    if (isHTMX) {
+            return res.set('HX-Redirect', '/trabPanel/incidencias').send();
+        }
+        return res.redirect('/trabPanel/incidencias');
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('trabPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userTrab
+      });
+    }
+    return res.render("trabPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-trabPanel",
+      userTrab
+    });
+  };
+
+};
+
+/********************************************************************************************/
+
+const consultarIncidencia = async (req, res) => {
+
+  const userTrab = req.user.nombre + " " + req.user.apellidos;
+  const isHTMX = req.headers['hx-request'];  
+  const dniTrabajador = req.user.dni;
+  const idIncidencia = req.params.id;
+
+  try {
+
+    const incidencia = await modelMark.findIncidenciaByIdTrab(idIncidencia, dniTrabajador);
+    const idFormateado = incidencia.id.toString().padStart(5, '0');
+
+    const tipoIncidencia = await modelMark.findAllTipoInc();
+
+    const tipoIncMap = {};
+    tipoIncidencia.forEach((tipoInc) => {
+      tipoIncMap[tipoInc.id] = tipoInc.tipo;
+    });    
+
+    if (isHTMX) {
+      return res.render("partials/adminTrab/consultarIncidencia", {
+        title: "Consulta de Incidencia",
+        layout: false,
+        userTrab,
+        incidencia,
+        idFormateado,
+        tipoIncMap
+      });
+    }
+    return res.render("partials/adminTrab/consultarIncidencia", {
+      title: "Consulta de Incidencia",
+      layout: "./layouts/layout-trabPanel",
+      userTrab,
+      incidencia,
+      idFormateado,
+      tipoIncMap
     });
 
   } catch (error) {
@@ -467,5 +1072,14 @@ module.exports = {
   listFichajesTrab,
   perfilTrab,
   cambiarPass,
-  changePass
+  changePass,
+  listIncidenciasTrab,
+  crearIncidencia,
+  createIncidencia,
+  modificarIncidencia,
+  updateIncidencia,
+  eliminarIncidencia,
+  deleteIncidencia,
+  deleteRegIncidencia,
+  consultarIncidencia
 };
