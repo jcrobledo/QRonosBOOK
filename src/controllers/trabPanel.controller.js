@@ -980,6 +980,7 @@ const consultarIncidencia = async (req, res) => {
   const isHTMX = req.headers['hx-request'];  
   const dniTrabajador = req.user.dni;
   const idIncidencia = req.params.id;
+  const mesConsulta = req.query.mes; 
 
   try {
 
@@ -1000,7 +1001,8 @@ const consultarIncidencia = async (req, res) => {
         userTrab,
         incidencia,
         idFormateado,
-        tipoIncMap
+        tipoIncMap,
+        mesConsulta
       });
     }
     return res.render("partials/adminTrab/consultarIncidencia", {
@@ -1009,7 +1011,8 @@ const consultarIncidencia = async (req, res) => {
       userTrab,
       incidencia,
       idFormateado,
-      tipoIncMap
+      tipoIncMap,
+      mesConsulta
     });
 
   } catch (error) {

@@ -1595,6 +1595,15 @@ button.btFichaje:hover {
     justify-content: center;
 }
 
+.contenedor-filtros-tabla-admin {
+    display: flex;  
+    gap: 10px;  
+    width: 100%;        
+    background-color: #f9f9f9;       
+    flex-wrap: wrap;       
+    justify-content: center;
+}
+
 /* Ocultamos el radio button real */
 .selector-segmentado input[type="radio"] {
     display: none;
@@ -1736,6 +1745,10 @@ button.btFichaje:hover {
     }
 
     .input-id {
+        width: 100%;
+    }
+
+    .input-id-inc {
         width: 100%;
     }
 

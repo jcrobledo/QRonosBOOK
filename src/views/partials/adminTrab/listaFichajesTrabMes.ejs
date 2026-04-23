@@ -128,8 +128,8 @@
                     <td><%= p.entrada.hora %></td>
                     <td>
                         <% if (p.entrada.incidencia) { %>
-                            <a href="/trabPanel/incidencias/consultar/<%= p.entrada.incidencia %>"
-                                hx-get="/trabPanel/incidencias/consultar/<%= p.entrada.incidencia %>"
+                            <a href="/trabPanel/incidencias/consultar/<%= p.entrada.incidencia %>?mes=<%= mesConsulta %>"
+                                hx-get="/trabPanel/incidencias/consultar/<%= p.entrada.incidencia %>?mes=<%= mesConsulta %>"
                                 hx-target="#secContenido"
                                 hx-swap="innerHTML show:window:top"
                                 hx-push-url="true"
@@ -191,8 +191,8 @@
                     <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %>"><%= p.salida.hora %></td>
                     <td>
                         <% if (p.salida.incidencia) { %>
-                            <a href="/trabPanel/incidencias/consultar/<%= p.salida.incidencia %>"
-                                hx-get="/trabPanel/incidencias/consultar/<%= p.salida.incidencia %>"
+                            <a href="/trabPanel/incidencias/consultar/<%= p.salida.incidencia %>?mes=<%= mesConsulta %>"
+                                hx-get="/trabPanel/incidencias/consultar/<%= p.salida.incidencia %>?mes=<%= mesConsulta %>"
                                 hx-target="#secContenido"
                                 hx-swap="innerHTML show:window:top"
                                 hx-push-url="true"
@@ -200,7 +200,8 @@
                                 class="link-incidencia">
                                 <%= p.salida.incidencia %>
                             </a>
-                        <% } %>                        
+                        <% } %>  
+                    </td>                      
                 </tr>
 
                 <% }); %>

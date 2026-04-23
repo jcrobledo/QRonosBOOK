@@ -76,7 +76,7 @@
 
         <div class="fila-botones" style="margin-top: 10px;">
             <button type="button" 
-                hx-get="/trabPanel/fichajes" 
+                hx-get="/trabPanel/fichajes?fecha=<%= mesConsulta %>" 
                 hx-target="#secContenido"
                 hx-push-url="true">
                 Volver  
