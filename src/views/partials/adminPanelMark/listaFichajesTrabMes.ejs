@@ -43,7 +43,7 @@
 
     <div class="navegacion-fecha">    
     
-        <span hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesAnterior %>&dir=<%= currentDir %>&from=<%= origen %>" 
+        <span hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesAnterior %>&dir=<%= currentDir %>&from=<%= origen %>&fechaVolver=<%= fechaVolver %>" 
           hx-target="#secContenido"           
           hx-push-url="true"
           class="triangulo-nav">
@@ -56,7 +56,7 @@
                value="<%= mesConsulta %>"              
                max="<%= mesActual %>"
                required 
-               hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?from=<%= origen %>" 
+               hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?from=<%= origen %>&fechaVolver=<%= fechaVolver %>" 
                onclick="this.showPicker()"
                onkeydown="return false;"
                hx-target="#secContenido"                
@@ -70,7 +70,7 @@
                 &#9654;
             </span>
         <% } else { %>
-            <span hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesSiguiente %>&dir=<%= currentDir %>&from=<%= origen %>" 
+            <span hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesSiguiente %>&dir=<%= currentDir %>&from=<%= origen %>&fechaVolver=<%= fechaVolver %>" 
               hx-target="#secContenido"               
               hx-push-url="true"
               class="triangulo-nav">
@@ -83,7 +83,7 @@
     <table class="tablaTrabajadoresFichajes">
         <thead>
             <tr>                                                
-                <th hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesConsulta %>&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                <th hx-get="/adminPanel/fichajes/<%= dniTrabajador %>?fecha=<%= mesConsulta %>&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&from=<%= origen %>&fechaVolver=<%= fechaVolver %>"
                     hx-target="#secContenido" 
                     hx-push-url="true"                   
                     class="sort-<%= currentDir.toLowerCase() %>"
@@ -111,7 +111,19 @@
                     <td><%= p.entrada.id %></td> 
                     <td>Entrada</td>
                     <td><%= p.entrada.hora %></td>
-                    <td><%= p.entrada.incidencia %></td>
+                    <td>
+                        <% if (p.entrada.incidencia) { %>
+                            <a href="/adminPanel/incidencias/consultar/<%= p.entrada.incidencia %>?fechaC=<%= mesConsulta %>&fromO=<%= origen %>&from=listFichajesTrab&dniTrab=<%= trabajador.dni %>&fechaVolver=<%= fechaVolver ? fechaVolver : mesConsulta %>"
+                                hx-get="/adminPanel/incidencias/consultar/<%= p.entrada.incidencia %>?fechaC=<%= mesConsulta %>&fromO=<%= origen %>&from=listFichajesTrab&dniTrab=<%= trabajador.dni %>&fechaVolver=<%= fechaVolver ? fechaVolver : mesConsulta %>"
+                                hx-target="#secContenido"
+                                hx-swap="innerHTML show:window:top"
+                                hx-push-url="true"
+                                title="Ver Incidencia"
+                                class="link-incidencia">
+                                <%= p.entrada.incidencia %>
+                            </a>
+                        <% } %>                           
+                    </td>
                     <% if (indice === 0) { %>
                         <td rowspan="<%= dia.parejas.length * 2 %>" class="<%= dia.esPositivo ? 'positivo' : 'negativo' %>">
                             <%= dia.saldo %>
@@ -124,7 +136,19 @@
                     <td><%= p.salida.id %></td>                    
                     <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %>">Salida</td>
                     <td class="<%= p.salida.hora === '--:--' ? 'falta-fichaje' : '' %>"><%= p.salida.hora %></td>
-                    <td><%= p.salida.incidencia %></td>
+                    <td>
+                        <% if (p.salida.incidencia) { %>
+                            <a href="/adminPanel/incidencias/consultar/<%= p.salida.incidencia %>?fechaC=<%= mesConsulta %>&fromO=<%= origen %>&from=listFichajesTrab&dniTrab=<%= trabajador.dni %>&fechaVolver=<%= fechaVolver ? fechaVolver : mesConsulta %>"
+                                hx-get="/adminPanel/incidencias/consultar/<%= p.salida.incidencia %>?fechaC=<%= mesConsulta %>&fromO=<%= origen %>&from=listFichajesTrab&dniTrab=<%= trabajador.dni %>&fechaVolver=<%= fechaVolver ? fechaVolver : mesConsulta %>"
+                                hx-target="#secContenido"
+                                hx-swap="innerHTML show:window:top"
+                                hx-push-url="true"
+                                title="Ver Incidencia"
+                                class="link-incidencia">
+                                <%= p.salida.incidencia %>
+                            </a>
+                        <% } %>                            
+                    </td>
                 </tr>
 
                 <% }); %>

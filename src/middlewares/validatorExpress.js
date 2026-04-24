@@ -100,6 +100,66 @@ const rulesDep = [
         .isAlpha('es-ES', { ignore: ' -' })
 ];
 
+const rulesInc = [
+    body('id')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ min: 5, max: 5 })
+        .isNumeric(),
+    body('idMarcaje')
+        .optional({ checkFalsy: true })
+        .trim()
+        .escape()        
+        .isLength({ min: 12, max: 12 })
+        .isNumeric(),
+    body('dni')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ min: 9, max: 9 })
+        .matches('.{8}[A-Z]'),
+    body('nombre')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ max: 25 })
+        .isAlpha('es-ES', { ignore: ' -' }),
+    body('apellidos')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ max: 50 })
+        .isAlpha('es-ES', { ignore: ' -' }),
+    body('resolucion')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ max: 10 })
+        .isAlpha('es-ES', { ignore: ' -' }),
+    body('tipoInc')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ max: 20 })
+        .isAlpha('es-ES', { ignore: ' -' }),
+    body('fechaFich')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isISO8601(),
+    body('horaFich')
+        .trim()
+        .escape()
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+    body('horaNewFich')
+        .optional({ checkFalsy: true })
+        .trim()
+        .escape()        
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)    
+];
+
 /********************************************************************************************/
 
 const validate = (req, res, next) => {
@@ -141,5 +201,6 @@ module.exports = {
     rulesDNI,
     rulesAdmin, 
     rulesDep,
+    rulesInc,
     validate
 };

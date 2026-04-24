@@ -26,6 +26,43 @@ const rulesPass = [
         .notEmpty()
 ];
 
+const rulesIncNewFich = [
+    body('fechaInc')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isISO8601(),
+    body('horaInc')
+        .trim()
+        .escape()
+        .notEmpty()
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+];
+
+const rulesIncUpdateFich = [
+    body('idMarcaje')        
+        .trim()
+        .escape()  
+        .notEmpty()      
+        .isLength({ min: 12, max: 12 })
+        .isNumeric(),
+    body('fechaFich')
+        .optional({ checkFalsy: true })
+        .trim()
+        .escape()        
+        .isISO8601(),
+    body('horaFich')
+        .optional({ checkFalsy: true })
+        .trim()
+        .escape()        
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/),
+    body('horaNewFich')
+        .optional({ checkFalsy: true })
+        .trim()
+        .escape()        
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
+];
+
 /********************************************************************************************/
 
 const validate = (req, res, next) => {
@@ -62,6 +99,8 @@ const validate = (req, res, next) => {
 
 module.exports = {
     rulesAuth,
-    rulesPass,    
+    rulesPass,
+    rulesIncNewFich,
+    rulesIncUpdateFich,
     validate
 };

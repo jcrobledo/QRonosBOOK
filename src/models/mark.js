@@ -4,11 +4,12 @@ const pool = require('./mysql');
 
 const store = async (marcaje) => {
 
-    const sql = 'INSERT INTO marcajes (id, dni, date, time) VALUES (?, ?, ?, ?)';
+    const sql = 'INSERT INTO marcajes (id, dni, date, time, incidencia) VALUES (?, ?, ?, ?, ?)';
 
     try {
 
-        const [result] = await pool.execute(sql, [marcaje.id, marcaje.dni, marcaje.date, marcaje.time]);
+        const idIncidencia = marcaje.incidencia !== undefined ? marcaje.incidencia : null;
+        const [result] = await pool.execute(sql, [marcaje.id, marcaje.dni, marcaje.date, marcaje.time, idIncidencia]);
         return result.insertId;
 
     } catch (error) {
@@ -37,7 +38,7 @@ const lastMark = async () => {
 
 const lastMarkDay = async (fecha) => {
 
-    const sql = 'SELECT * FROM marcajes WHERE date = ? ORDER BY id DESC LIMIT 1';
+    const sql = 'SELECT id FROM marcajes WHERE date = ? ORDER BY id DESC LIMIT 1';
 
     try {
 
@@ -352,6 +353,200 @@ const findAllTipoInc = async () => {
 
 /********************************************************************************************/
 
+const findAllIncidencias = async ({ filtros = {}, sort, dir, limit, offset }) => {
+    
+    let query = `
+        SELECT 
+            LPAD(i.id, 5, '0') AS idInc, 
+            i.idMarcaje AS idFich, 
+            i.dni, 
+            i.resolucion AS estado,
+            it.tipo AS tipoInc, 
+            t.nombre, 
+            t.apellidos 
+        FROM incidencias i
+        LEFT JOIN incidenciaTipo it ON i.tipoInc = it.id
+        LEFT JOIN trabajadores t ON i.dni = t.dni`;
+
+    let countQuery = `
+        SELECT COUNT(*) as total 
+        FROM incidencias i
+        LEFT JOIN trabajadores t ON i.dni = t.dni`;
+
+    let queryParams = [];
+    let whereClauses = [];
+    
+    if (filtros.idInc) {
+        whereClauses.push("i.id LIKE ?");
+        queryParams.push(`%${filtros.idInc}%`);
+    }
+
+    if (filtros.idFich) {
+        whereClauses.push("i.idMarcaje LIKE ?");
+        queryParams.push(`%${filtros.idFich}%`);
+    }
+
+    if (filtros.dni) {
+        whereClauses.push("i.dni LIKE ?");
+        queryParams.push(`%${filtros.dni}%`);
+    }
+
+    if (filtros.nombre) {
+        whereClauses.push("t.nombre LIKE ?");
+        queryParams.push(`%${filtros.nombre}%`);
+    }
+    
+    if (filtros.apellidos) {
+        whereClauses.push("t.apellidos LIKE ?");
+        queryParams.push(`%${filtros.apellidos}%`);
+    }
+    
+    if (filtros.estado && filtros.estado !== 'todas') {
+        whereClauses.push("i.resolucion = ?");
+        queryParams.push(filtros.estado);
+    }
+
+    if (whereClauses.length > 0) {
+        const whereString = " WHERE " + whereClauses.join(" AND ");
+        query += whereString;
+        countQuery += whereString;
+    }
+    
+    const validColumns = ['idInc', 'idFich', 'dni', 'nombre', 'apellidos', 'tipoInc', 'estado'];
+    let orderBy = 'i.id'; 
+
+    if (sort === 'idInc') orderBy = 'i.id';
+    if (sort === 'idFich') orderBy = 'i.idMarcaje';
+    if (sort === 'dni') orderBy = 'i.dni';
+    if (sort === 'nombre') orderBy = 't.nombre';
+    if (sort === 'apellidos') orderBy = 't.apellidos';
+    if (sort === 'tipoInc') orderBy = 'it.tipo';
+    if (sort === 'estado') orderBy = 'i.resolucion';
+
+    const orderDir = (dir && dir.toUpperCase() === 'ASC') ? 'ASC' : 'DESC';
+
+    query += ` ORDER BY ${orderBy} ${orderDir} LIMIT ? OFFSET ?`;
+    
+    try {        
+        const [rows] = await pool.execute(query, [...queryParams, String(limit), String(offset)]);
+        const [[{ total }]] = await pool.execute(countQuery, queryParams);
+
+        return {
+            incidencias: rows,
+            totalCount: total
+        };
+    } catch (error) {        
+        throw error;
+    }
+};
+
+/********************************************************************************************/
+
+const findIncidenciaById = async (idIncidencia) => {
+
+    const query = `
+        SELECT 
+            LPAD(i.id, 5, '0') AS idInc, 
+            i.dni,
+            i.idMarcaje AS idFich,
+            i.date,
+            TIME_FORMAT(i.time, '%H:%i') AS time,
+            TIME_FORMAT(i.timeChange, '%H:%i') AS timeChange,           
+            it.tipo AS tipoInc, 
+            i.resolucion AS estado,
+            t.nombre, 
+            t.apellidos 
+        FROM incidencias i
+        LEFT JOIN incidenciaTipo it ON i.tipoInc = it.id
+        LEFT JOIN trabajadores t ON i.dni = t.dni
+        WHERE i.id = ?`;
+
+    try {
+        const [rows] = await pool.execute(query, [idIncidencia]);
+        return rows[0];
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const updateEstadoIncidencia = async (idIncidencia, nuevoEstado) => {
+
+    const sql = 'UPDATE incidencias SET resolucion = ? WHERE id = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [nuevoEstado, idIncidencia]);
+        return rows; 
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const updateMarkWithIncRecha = async (idMarcaje, idInc) => {
+
+    const sql = 'UPDATE marcajes SET incidencia = ? WHERE id = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [idInc, idMarcaje]);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const updateIncIdNewFich = async (idMarcaje, idIncidencia) => {
+
+    const sql = 'UPDATE incidencias SET idMarcaje = ? WHERE id = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [idMarcaje, idIncidencia]);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const updateMarkIncChangeTime = async (idMarcaje, nuevaHora, idIncidencia) => {
+
+    const sql = 'UPDATE marcajes SET time = ?, incidencia = ? WHERE id = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [nuevaHora, idIncidencia, idMarcaje]);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
+const deleteMarkInc = async (idMarcaje) => {
+
+    const sql = 'DELETE FROM marcajes WHERE id = ?';
+
+    try {
+        const [rows] = await pool.execute(sql, [idMarcaje]);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
 module.exports = {
     store,
     lastMark,
@@ -366,5 +561,12 @@ module.exports = {
     findMarkByIdTrab,
     deleteRegInc,   
     findIncidenciaByIdTrab,
-    findAllTipoInc
+    findAllTipoInc,
+    findAllIncidencias,
+    findIncidenciaById,
+    updateEstadoIncidencia,
+    updateMarkWithIncRecha,
+    updateIncIdNewFich,
+    updateMarkIncChangeTime,
+    deleteMarkInc
 };

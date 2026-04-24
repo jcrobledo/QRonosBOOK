@@ -4,7 +4,7 @@ const controller = require('../controllers/adminPanel.controller');
 const controllerAux = require('../controllers/adminPanelAux.controller');
 const controllerMark = require('../controllers/adminPanelMark.controller');
 const vToken = require('../middlewares/verify-token');
-const { rulesAuth, rulesAlta, rulesPass, rulesDNI, rulesAdmin, rulesDep, validate } = require('../middlewares/validatorExpress');
+const { rulesAuth, rulesAlta, rulesPass, rulesDNI, rulesAdmin, rulesDep, rulesInc, validate } = require('../middlewares/validatorExpress');
 
 /* Rutas para Acceso al Panel de Adminitración: Login y Logout */
 router.post("/", rulesAuth, controller.auth);
@@ -40,5 +40,10 @@ router.delete("/departamentos/eliminar/:id", vToken.verifyTokenAdmin, controller
 /* Rutas para la Gestión de Fichajes e Incidencias */
 router.get("/fichajes", vToken.verifyTokenAdmin, controllerMark.listFichajes);
 router.get("/fichajes/:dni", vToken.verifyTokenAdmin, controllerMark.listFichajesTrab);
+router.get("/incidencias", vToken.verifyTokenAdmin, controllerMark.listIncidencias);
+router.get("/incidencias/consultar/:id", vToken.verifyTokenAdmin, controllerMark.consultarIncidencia);
+router.get("/incidencias/resolver/:id", vToken.verifyTokenAdmin, controllerMark.resolverIncidencia);
+router.put("/incidencias/rechazar/:id", vToken.verifyTokenAdmin, rulesInc, validate, controllerMark.rechazarIncidencia);
+router.put("/incidencias/aceptar/:id", vToken.verifyTokenAdmin, rulesInc, validate, controllerMark.aceptarIncidencia);
 
 module.exports = router;  //para poder exportar la ruta a otros códigos

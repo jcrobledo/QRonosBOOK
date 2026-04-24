@@ -10,7 +10,7 @@
                 class="iconoScale">            
         </div>
         <h2 class="correcto tituloCabecera">
-            <span class="texto-largo">Gestión de </span>Fichajes
+            <span class="texto-largo">Gestión de </span>Incidencias
         </h2>    
         <div class="spacer">            
         </div>    
@@ -21,18 +21,24 @@
     </div>
 
     <form class="formularioFiltro"
-        hx-get="/adminPanel/fichajes" 
+        hx-get="/adminPanel/incidencias" 
         hx-target="#secContenido" 
-        hx-push-url="true">
-
-        <input type="hidden" name="fecha" value="<%= filtros.fecha %>">
+        hx-push-url="true">   
+        
+        <div class="form-group-filtro">
+            <input class="form-control input-dni" type="text" id="idInc" name="idInc" maxlength="5" pattern="\[0-9]{1,5}"
+                autocomplete="off" placeholder=" "
+                title="De 1 a 5 números"
+                value="<%= filtros.idInc %>">
+            <label class="control-label" for="idInc">ID Inc</label>
+        </div>
 
         <div class="form-group-filtro">
-            <input class="form-control input-id" type="text" id="id" name="id" maxlength="12" pattern="\[0-9]{1,12}"
+            <input class="form-control input-id" type="text" id="idFich" name="idFich" maxlength="12" pattern="\[0-9]{1,12}"
                 autocomplete="off" placeholder=" "
                 title="De 1 a 12 números"
-                value="<%= filtros.id %>">
-            <label class="control-label" for="id">ID</label>
+                value="<%= filtros.idFich %>">
+            <label class="control-label" for="idFich">ID Fich</label>
         </div>
 
         <div class="form-group-filtro">
@@ -55,20 +61,62 @@
                 pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ \-]{1,50}" autocomplete="off" placeholder=" " title="Solo letras, máximo 50 caracteres"
                 value="<%= filtros.apellidos %>">
             <label class="control-label" for="apellidos">Apellidos</label>
-        </div>    
+        </div>  
         
-        <div class="form-group-filtro">
-            <input class="form-control input-dni" type="text" id="incidencia" name="incidencia" maxlength="5" pattern="\[0-9]{1,5}"
-                autocomplete="off" placeholder=" "
-                title="De 1 a 5 números"
-                value="<%= filtros.incidencia %>">
-            <label class="control-label" for="incidencia">Incidencia</label>
+        <div class="contenedor-filtros-tabla-admin">
+        
+        <div class="selector-segmentado">
+            <input type="radio" 
+                name="estado" 
+                id="todas" 
+                value="todas"
+                hx-get="/adminPanel/incidencias"
+                hx-target="#secContenido"
+                hx-include=".formularioFiltro"
+                hx-trigger="change" 
+                <%= filtros.estado === 'todas' ? 'checked' : '' %>>
+            <label for="todas">Todas</label>
+
+            <input type="radio" 
+                name="estado" 
+                id="aceptadas" 
+                value="aceptada"
+                hx-get="/adminPanel/incidencias"
+                hx-target="#secContenido"
+                hx-include=".formularioFiltro"
+                hx-trigger="change"
+                <%= filtros.estado === 'aceptada' ? 'checked' : '' %>>
+            <label for="aceptadas">Aceptadas</label>
+
+            <input type="radio" 
+                name="estado" 
+                id="rechazadas" 
+                value="rechazada"
+                hx-get="/adminPanel/incidencias"
+                hx-target="#secContenido"
+                hx-include=".formularioFiltro"
+                hx-trigger="change"
+                <%= filtros.estado === 'rechazada' ? 'checked' : '' %>>
+            <label for="rechazadas">Rechazadas</label>
+
+            <input type="radio" 
+                name="estado" 
+                id="pendientes" 
+                value="pendiente"
+                hx-get="/adminPanel/incidencias"
+                hx-target="#secContenido"
+                hx-include=".formularioFiltro"
+                hx-trigger="change"
+                <%= filtros.estado === 'pendiente' ? 'checked' : '' %>>
+            <label for="pendientes">Pendientes</label>
         </div>
+
+    </div>
 
         <div class="fila-botones">
             <button type="submit">Filtrar</button>
             <button type="button" 
-                hx-get="/adminPanel/fichajes?fecha=<%= filtros.fecha %>" 
+                hx-get="/adminPanel/incidencias" 
                 hx-target="#secContenido"
                 hx-push-url="true">
                 Limpiar
@@ -78,128 +126,86 @@
     </form>
 </div>
 
-<div class="cajasAdminTrabTable fade-in">  
-
-    <div class="navegacion-fecha">    
-    
-        <span hx-get="/adminPanel/fichajes?fecha=<%= diaAnterior %>&sort=<%= currentSort %>&dir=<%= currentDir %>" 
-          hx-target="#secContenido" 
-          hx-include=".formularioFiltro"
-          hx-push-url="true"
-          class="triangulo-nav">
-            &#9664;
-        </span>
-
-        <div class="info-fecha-texto">                     
-            <input type="date" 
-               name="fecha" 
-               value="<%= filtros.fecha %>"
-               max="<%= hoy %>"
-               required 
-               hx-get="/adminPanel/fichajes" 
-               onclick="this.showPicker()"
-               onkeydown="return false;"
-               hx-target="#secContenido" 
-               hx-include=".formularioFiltro"
-               hx-trigger="change"
-               hx-push-url="true"
-               class="input-calendario-nav">
-        </div>
-    
-        <% if (esHoy) { %>
-            <span class="triangulo-nav triangulo-disabled">
-                &#9654;
-            </span>
-        <% } else { %>
-            <span hx-get="/adminPanel/fichajes?fecha=<%= diaSiguiente %>&sort=<%= currentSort %>&dir=<%= currentDir %>" 
-              hx-target="#secContenido" 
-              hx-include=".formularioFiltro"
-              hx-push-url="true"
-              class="triangulo-nav">
-                &#9654;
-            </span>
-        <% } %>
-
-    </div>
+<div class="cajasAdminTrabTable fade-in">      
  
     <table class="tablaTrabajadores">
         <thead>
             <tr>
-                <th hx-get="/adminPanel/fichajes?sort=id&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                <th hx-get="/adminPanel/incidencias?sort=idInc&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
-                    class="<%= currentSort === 'id' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 120px;">
-                ID</th>
-                <th hx-get="/adminPanel/fichajes?sort=dni&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    class="<%= currentSort === 'idInc' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 80px;">
+                ID Inc</th>
+                <th hx-get="/adminPanel/incidencias?sort=idFich&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
+                    hx-target="#secContenido"
+                    hx-include=".formularioFiltro"
+                    class="<%= currentSort === 'idFich' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 120px;">
+                ID FIch</th>
+                <th hx-get="/adminPanel/incidencias?sort=dni&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
                     class="<%= currentSort === 'dni' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 110px;"> 
                 DNI</th>
-                <th hx-get="/adminPanel/fichajes?sort=nombre&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                <th hx-get="/adminPanel/incidencias?sort=nombre&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
                     class="<%= currentSort === 'nombre' ? 'sort-' + currentDir.toLowerCase() : '' %>">
                 Nombre</th>
-                <th hx-get="/adminPanel/fichajes?sort=apellidos&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                <th hx-get="/adminPanel/incidencias?sort=apellidos&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
                     class="<%= currentSort === 'apellidos' ? 'sort-' + currentDir.toLowerCase() : '' %>">
                 Apellidos</th>
-                <th hx-get="/adminPanel/fichajes?sort=date&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                <th hx-get="/adminPanel/incidencias?sort=tipoInc&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
-                    class="<%= currentSort === 'date' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 110px;">
-                Día</th>
-                <th hx-get="/adminPanel/fichajes?sort=time&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
+                    class="<%= currentSort === 'tipoInc' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 150px;">
+                Tipo Inc</th>
+                <th hx-get="/adminPanel/incidencias?sort=estado&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>"
                     hx-target="#secContenido"
                     hx-include=".formularioFiltro"
-                    class="<%= currentSort === 'time' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 90px;">
-                Hora</th>
-                <th hx-get="/adminPanel/fichajes?sort=incidencia&dir=<%= currentDir === 'ASC' ? 'DESC' : 'ASC' %>&fecha=<%= filtros.fecha %>"
-                    hx-target="#secContenido"
-                    hx-include=".formularioFiltro"
-                    class="<%= currentSort === 'incidencia' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 100px;">
-                Incidencia</th>
+                    class="<%= currentSort === 'estado' ? 'sort-' + currentDir.toLowerCase() : '' %>" style="width: 80px;">
+                Resolución</th>                
                 <th class="no-sort" style="width: 110px;">Acciones</th>
             </tr>
         </thead>
         <tbody id="tablaTrabajadoresBody">
-            <% fichajes.forEach(function(fichaje) { %>
-            <tr class="<%= fichaje.incidencia ? 'fila-con-incidencia' : '' %>">
-                <td><%= fichaje.id %></td>
-                <td><%= fichaje.dni %></td>
-                <td><%= fichaje.nombre %></td> 
-                <td><%= fichaje.apellidos %></td>  
-                <td><%= fichaje.date %></td>
-                <td><%= fichaje.time %></td>
-                <td><%= fichaje.incidencia %></td>               
+            <% incidencias.forEach(function(incidencia) { %>
+            <tr class="<%= incidencia.estado === 'Aceptada' ? 'positivo_inc' : (incidencia.estado === 'Rechazada' ? 'negativo_inc' : '') %>">
+                <td><%= incidencia.idInc %></td>
+                <td><%= incidencia.idFich %></td>
+                <td><%= incidencia.dni %></td>
+                <td><%= incidencia.nombre %></td> 
+                <td><%= incidencia.apellidos %></td>  
+                <td><%= incidencia.tipoInc %></td>
+                <td><%= incidencia.estado %></td>                               
                 <td class="celda-menu">
                     <button class="btnAcciones">&middot;&middot;&middot;</button>
                     <div class="dropdown-table">
                         <ul>                            
-                            <li><a href="/adminPanel/fichajes/<%= fichaje.dni %>?fechaVolver=<%= filtros.fecha %>"
-                                hx-get="/adminPanel/fichajes/<%= fichaje.dni %>?fechaVolver=<%= filtros.fecha %>"
+                            <li><a href="/adminPanel/incidencias/consultar/<%= incidencia.idInc %>?from=listIncidencias"
+                                hx-get="/adminPanel/incidencias/consultar/<%= incidencia.idInc %>?from=listIncidencias"
                                 hx-target="#secContenido"
                                 hx-swap="innerHTML show:window:top"
                                 hx-push-url="true">
-                                Ver fichajes
+                                Ver Incidencia
                                 </a>
-                            </li>
+                            </li>                                                    
                             <li>
-                                <% if (fichaje.incidencia) { %>
-                                    <a href="/adminPanel/incidencias/consultar/<%= fichaje.incidencia %>?fecha=<%= filtros.fecha %>&from=listFichajes"
-                                    hx-get="/adminPanel/incidencias/consultar/<%= fichaje.incidencia %>?fecha=<%= filtros.fecha %>&from=listFichajes"
-                                    hx-target="#secContenido"
-                                    hx-swap="innerHTML show:window:top"
-                                    hx-push-url="true">
-                                        Ver Incidencia
-                                </a>
+                                <% if (incidencia.estado === 'Pendiente') { %>
+                                    <a href="/adminPanel/incidencias/resolver/<%= incidencia.idInc %>"
+                                        hx-get="/adminPanel/incidencias/resolver/<%= incidencia.idInc %>"
+                                        hx-target="#secContenido"
+                                        hx-swap="innerHTML show:window:top"
+                                        hx-push-url="true">
+                                        Resolver Incidencia
+                                    </a>
                                 <% } else { %>
                                     <span class="incidencia-disabled">
-                                        Ver Incidencia
+                                        Resolver Incidencia
                                     </span>
                                 <% } %>
-                            </li>
+                            </li>                            
                         </ul>
                     </div>
                 </td>                             
