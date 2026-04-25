@@ -547,6 +547,21 @@ const deleteMarkInc = async (idMarcaje) => {
 
 /********************************************************************************************/
 
+const countIncPendientes = async () => {
+
+    const sql = 'SELECT COUNT(*) AS pendientes FROM incidencias WHERE resolucion = "Pendiente"';
+
+    try {
+        const [rows] = await pool.execute(sql);
+        return rows[0].pendientes;
+    } catch (error) {
+        throw error;
+    }
+
+};
+
+/********************************************************************************************/
+
 module.exports = {
     store,
     lastMark,
@@ -568,5 +583,6 @@ module.exports = {
     updateMarkWithIncRecha,
     updateIncIdNewFich,
     updateMarkIncChangeTime,
-    deleteMarkInc
+    deleteMarkInc,
+    countIncPendientes
 };

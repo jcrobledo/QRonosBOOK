@@ -64,6 +64,11 @@ io.on('connection', (socket) => {
         io.emit('EjecutarRecargaQR'); // El servidor reacciona emitiendo el evento al recurso de Códigos QR's
         // console.log('QR renovado.');
     });
+    socket.on('SolicitarRecargaMenuInicio', () => { // El servidor está "suscrito" a este evento que viene del navegador
+        // console.log('Conexión con el Panel de Administración realizada. Renovación Menú inicio solicitada.');         
+        io.emit('EjecutarRecargaMenuInicio'); // El servidor reacciona emitiendo el evento al recurso Menú Inicio de Administración
+        // console.log('Menú inicio renovado.');
+    });
 });
 
 server.listen(PORTSSL, () => {

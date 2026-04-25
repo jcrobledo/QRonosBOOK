@@ -67,5 +67,26 @@
     </form>    
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+    { // Usamos un bloque para evitar errores de "already declared" por let reloadIncMenuInicio
+
+    let reloadIncMenuInicio = '<%= reloadIncMenuInicio %>';
+
+    if (reloadIncMenuInicio == 'true') {
+        const socket = io(); // 1. Conectamos al servidor
+
+        socket.on('connect', () => {
+            // console.log("Conectado. Enviando orden de recarga de Menú Inicio Administrador..."); // 2. Esperamos a que la conexión esté lista para emitir      
+            socket.emit('SolicitarRecargaMenuInicio'); // 3. Emitimos el evento inmediatamente al entrar
+        });
+    };
+
+    }
+
+</script>
+
 
 

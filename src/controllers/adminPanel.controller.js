@@ -86,24 +86,47 @@ const auth = async (req, res) => {
 
 /********************************************************************************************/
 
-const adminPage = (req, res) => {
+const adminPage = async (req, res) => {
 
   const userAdmin = req.user.nombre + " " + req.user.apellidos;
   const isHTMX = req.headers['hx-request'];
 
-  if (isHTMX) {
+  try {
+
+    const countIncPendientes = await modelMark.countIncPendientes();
+
+    if (isHTMX) {
+      return res.render("partials/adminPanel/menu_inicio", {
+        title: "Panel de Administración",
+        layout: false,
+        userAdmin,
+        countIncPendientes
+      });
+    }
+
     return res.render("partials/adminPanel/menu_inicio", {
       title: "Panel de Administración",
-      layout: false,
+      layout: "./layouts/layout-adminPanel",
+      userAdmin,
+      countIncPendientes
+    });
+
+  } catch (error) {
+    console.error("Error general de acceso a BBDD:", error);
+    if (isHTMX) {
+      res.setHeader('HX-Retarget', '#secContenido');
+      return res.render('adminPanel/errorGeneral', {
+        title: "Error General",
+        layout: false,
+        userAdmin
+      });
+    }
+    return res.render("adminPanel/errorGeneral", {
+      title: "Error General",
+      layout: "./layouts/layout-adminPanel",
       userAdmin
     });
-  }
-
-  return res.render("partials/adminPanel/menu_inicio", {
-    title: "Panel de Administración",
-    layout: "./layouts/layout-adminPanel",
-    userAdmin
-  });
+  };
 
 };
 
@@ -589,7 +612,7 @@ const eliminarTrabajador = async (req, res) => {
         layout: false,
         userAdmin,
         trabajador,
-        departamentoNombre, 
+        departamentoNombre,
         tieneMarcajes
       });
     };

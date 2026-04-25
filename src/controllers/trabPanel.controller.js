@@ -434,7 +434,7 @@ const listIncidenciasTrab = async (req, res) => {
   const isHTMX = req.headers['hx-request'];
   const dniTrabajador = req.user.dni;
 
-  const { filtro, sort, dir, page } = req.query;
+  const { filtro, sort, dir, page, reloadIncMenuInicio } = req.query;
   const filtros = {
     estado: filtro || 'todas'
   };
@@ -478,7 +478,8 @@ const listIncidenciasTrab = async (req, res) => {
         desde,
         hasta,
         totalPages: Math.ceil(totalCount / limit),
-        totalCount
+        totalCount,
+        reloadIncMenuInicio: reloadIncMenuInicio || 'false'
       });
     }
 
@@ -495,7 +496,8 @@ const listIncidenciasTrab = async (req, res) => {
       desde,
       hasta,
       totalPages: Math.ceil(totalCount / limit),
-      totalCount
+      totalCount,
+      reloadIncMenuInicio: reloadIncMenuInicio || 'false'
     });
 
   } catch (error) {
@@ -577,6 +579,8 @@ const createIncidencia = async (req, res) => {
     resolucion: "Pendiente"
   };
 
+  const reloadIncMenuInicio = "true";
+
   try {
 
     const nuevaIncidenciaId = await modelMark.storeIncidencia(incidencia);
@@ -590,7 +594,8 @@ const createIncidencia = async (req, res) => {
         userTrab,
         mensajeOK: `Incidencia creada CORRECTAMENTE con ID ${idFormateado}`,
         fecha: incidencia.fecha,
-        hora: incidencia.hora
+        hora: incidencia.hora,
+        reloadIncMenuInicio
       });
     }
 
@@ -600,7 +605,8 @@ const createIncidencia = async (req, res) => {
       userTrab,
       mensajeOK: `Incidencia creada CORRECTAMENTE con ID ${idFormateado}`,
       fecha: incidencia.fecha,
-      hora: incidencia.hora
+      hora: incidencia.hora,
+      reloadIncMenuInicio
     });
 
   } catch (error) {
@@ -736,6 +742,8 @@ const updateIncidencia = async (req, res) => {
     tipo: 2, // Tipo 2 = Modificar Fichaje
     resolucion: "Pendiente"
   }; 
+
+  const reloadIncMenuInicio = "true";
   
   try {
 
@@ -749,7 +757,8 @@ const updateIncidencia = async (req, res) => {
         layout: false,
         userTrab,
         incidencia,        
-        mensajeExito
+        mensajeExito,
+        reloadIncMenuInicio
       });
     }
     return res.render("partials/adminTrab/confirmEditarInc", {
@@ -757,7 +766,8 @@ const updateIncidencia = async (req, res) => {
       layout: "./layouts/layout-trabPanel",
       userTrab,
       incidencia,
-      mensajeExito
+      mensajeExito,
+      reloadIncMenuInicio
     });
 
   } catch (error) {
@@ -893,6 +903,8 @@ const deleteIncidencia = async (req, res) => {
     tipo: 3, // Tipo 3 = Eliminar Fichaje
     resolucion: "Pendiente"
   }; 
+
+  const reloadIncMenuInicio = "true";
   
   try {
 
@@ -906,7 +918,8 @@ const deleteIncidencia = async (req, res) => {
         layout: false,
         userTrab,
         incidencia,        
-        mensajeExito
+        mensajeExito,
+        reloadIncMenuInicio
       });
     }
     return res.render("partials/adminTrab/confirmEliminarInc", {
@@ -914,7 +927,8 @@ const deleteIncidencia = async (req, res) => {
       layout: "./layouts/layout-trabPanel",
       userTrab,
       incidencia,
-      mensajeExito
+      mensajeExito,
+      reloadIncMenuInicio
     });
 
   } catch (error) {
@@ -944,14 +958,16 @@ const deleteRegIncidencia = async (req, res) => {
   const isHTMX = req.headers['hx-request'];  
   const idIncidencia = req.params.id;
 
+  const reloadIncMenuInicio = "true";
+
   try {
 
     const result = await modelMark.deleteRegInc(idIncidencia);
 
     if (isHTMX) {
-            return res.set('HX-Redirect', '/trabPanel/incidencias').send();
+            return res.set('HX-Redirect', `/trabPanel/incidencias?reloadIncMenuInicio=${reloadIncMenuInicio}`).send();
         }
-        return res.redirect('/trabPanel/incidencias');
+        return res.redirect(`/trabPanel/incidencias?reloadIncMenuInicio=${reloadIncMenuInicio}`);
 
   } catch (error) {
     console.error("Error general de acceso a BBDD:", error);

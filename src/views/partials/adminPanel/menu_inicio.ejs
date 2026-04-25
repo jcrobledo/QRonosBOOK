@@ -83,16 +83,34 @@
                 hx-target="#secContenido" 
                 hx-push-url="true"
                 style="cursor:pointer">
-                <img src="/images/incidencias.png" style="height:7rem;width:7rem" class="iconoScale">
+                <img src="/images/<%= countIncPendientes > 0 ? 'incidenciasHas.png' : 'incidencias.png' %>" style="height:7rem;width:7rem" class="iconoScale">
             </div>
             <h3 class="h3_eleMenu"
                 hx-get="/adminPanel/Incidencias" 
                 hx-target="#secContenido" 
                 hx-push-url="true"
                 style="cursor:pointer"
-                data-text="Incidencias">
-                Incidencias
+                <% let textoFinal = countIncPendientes > 0 ? `Incidencias (${countIncPendientes})` : 'Incidencias' %>
+                data-text="<%= textoFinal %>">
+                <%= textoFinal %>
             </h3>  
         </div>
     </section>
 </div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+{ // Usamos un bloque para evitar errores de "already declared" por const socket
+
+const socket = io();
+    
+socket.on('EjecutarRecargaMenuInicio', () => {
+    // console.log('Menú Inicio Actualizado'); // El navegador reacciona al evento del servidor    
+    window.location.reload();
+});
+
+}
+
+</script>
